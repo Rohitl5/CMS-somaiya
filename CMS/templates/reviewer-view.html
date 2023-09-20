@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% block title %}Reviewer - KJSIT Conference Management System{% endblock %}
+
+{% block additional-css %}
+.title-column{
+  width:500px;
+  font-weight:normal;
+ }
+
+ @media only screen and (max-width: 430px){
+  .main-body{
+    display:flex;
+    background-color:#f2f2f2;
+    justify-content:center;
+    width:fit-content;
+    margin-left:auto;
+    margin-right:auto;
+    flex-wrap:wrap;
+  }
+
+ 
+}
+{% endblock additional-css %}
+{% block content %}
+<div class="row" id="conf-header" style="background: linear-gradient(to right, rgb(255, 65, 108), rgb(255, 75, 43));margin-top:100px;height:300px;">
+  <center><h1 style="color:white;margin-top:30px;">((Conference Name))</h1></center>
+  <center><h3 style="color:white;margin-top:30px;">Last Date of Submission : ((Date))</h3></center>
+</div>  
+
+<div class="main-body" style="display:flex;background-color:#f2f2f2;margin-left:auto;margin-right:auto;width:fit-content;margin-bottom:30px;">
+        <div class="tab" style="margin-top:30px;background-color:white;max-width:fit-content;flex:auto;height: max-content;">
+            <ul class="nav flex-column">
+            <li class="nav-item">
+              <button class="tablinks" onclick="openInfo(event,'pending-reviews') " id="defaultOpen" style="width:250px;height:60px;border:none;background-color:white;text-align: left;font-size: 20px;border-left: 5px solid red; border-top: 5px solid rgba(231,232,233,0.5);font-weight:bold;color:#494F55;">
+                <i class="fas fa-pager"></i>  
+                &nbsp;Pending Reviews
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="tablinks" onclick="openInfo(event, 'past-submissions')" style="width:250px;height:60px;border:none;background-color:white;text-align: left;font-size: 20px;border-left: 5px solid red; border-top: 5px solid rgba(231,232,233,0.5);font-weight:bold;color:#494F55;">
+                <i class="fas fa-list"></i>  
+                &nbsp;Past Reviews
+              </button>
+            </li>
+            </ul>
+          </div>
+
+        <div class="content-main" style="margin-left:10px;max-width:fit-content;flex:auto;margin-top:30px;background-color:white;">
+            <div id="pending-reviews" class="tabcontent">
+              <table style="margin-bottom:5px;">
+                <tr>
+                  <th class="title-column">&nbsp;&nbsp;(Title with link of paper)</th>
+                  <th style="font-weight:normal;padding-right:30px;">
+                    <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      Add Review
+                    </button>
+                  </th>
+                </tr>
+              </table>
+            </div> 
+            <div id="past-submissions" class="tabcontent">
+              <table style="margin-bottom:5px;">
+                <tr>
+                  <th class="title-column">&nbsp;&nbsp;(Title with link of paper)</th>
+                  <th style="font-weight:normal;padding-right:30px;">
+                    <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+                      &nbsp;&nbsp;View&nbsp;&nbsp;
+                    </button>
+                  </th>
+                </tr>
+              </table>
+            </div> 
+        </div> 
+     
+</div> 
+
+<!-- New Review Modal -->
+<div class="modal " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#a70000;color:#fff;">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add new review</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        &nbsp;&nbsp;Title: (Title)<br>
+        &nbsp;&nbsp;Author: (Author)
+        <div  style=" display: flex;flex-direction: row;margin-top:10px;"class="form-row">
+               
+          <div style="width:50%" class="form-floating mx-1 mb-3 ">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+              <option selected>.....</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select>
+            <label for="floatingSelect">Relevance</label>
+          </div>
+       
+        <div style="width:50%" class="form-floating mx-1 mb-3 ">
+          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+            <option selected>....</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+          <label for="floatingSelect">Writing Style</label>
+        </div>
+        <div style="width:50%" class="form-floating mx-1 mb-3 ">
+          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+            <option selected>....</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+          <label for="floatingSelect">Result Analysis</label>
+        </div>
+        </div>
+
+        <div class="form-floating  mb-3">
+          <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+          <label for="floatingTextarea2">Comments</label>
+        </div>
+        
+        <div  style=" display: flex;flex-direction: row;"class="form-row">
+               
+          <div style="width:50%" class="form-floating mx-1 mb-3 ">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+              <option selected>.....</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select>
+            <label for="floatingSelect">Suggested Mode of Preparation</label>
+          </div>
+       
+        <div style="width:50%" class="form-floating mx-1 mb-3 ">
+          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+            <option selected>....</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+          <label for="floatingSelect">Overall Evaluation</label>
+        </div>
+        </div>
+
+        <div class="form-floating  mb-3">
+          <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+          <label for="floatingTextarea2">Confidential remarks for program chair</label>
+        </div>
+        
+      
+      </div>  
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Submitted Reviews Modal-->
+<div class="modal " id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#a70000;color:#fff;">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Review</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        &nbsp;&nbsp;Title: (Title)<br>
+        &nbsp;&nbsp;Author: (Author)<br>
+        &nbsp;&nbsp;Relevance: 1
+        &nbsp;&nbsp;Writing Style: 2
+        &nbsp;&nbsp;Result Analysis: 3<br>
+        &nbsp;&nbsp;Comments: ()<br>
+        &nbsp;&nbsp;Suggested Mode of Preparation: (Points)<br>
+        &nbsp;&nbsp;Overall Evaluation: (Points)<br>
+        &nbsp;&nbsp;Confidential remarks for program chair: (Points)<br>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block additional-script %}
+<script>
+    function openInfo(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+        tablinks[i].style.backgroundColor="white"
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+      evt.currentTarget.style.backgroundColor="#ffcbd1";
+    }
+    
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+    </script>
+{% endblock additional-script %}
+
+

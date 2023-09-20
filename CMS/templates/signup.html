@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Sign Up - Conference Management System{% endblock %}
+
+{% block additional-css %}
+@media only screen and (max-width: 770px) {
+    .signup-side-part{
+        display:none;
+    }
+  }
+{% endblock additional-css %}
+
+{% block content %}
+
+<div class="main-container" style="display:flex;width:fit-content;height:600px;margin-left:auto;margin-right:auto;">
+<div class="signup-side-part" style=" width:auto;min-height:500px;">
+    <img src="https://i0.wp.com/eos.org/wp-content/uploads/2022/09/conference.png?fit=1200%2C675&ssl=1" alt="conf" style="width: 100%;
+    height: 80%;
+    transform: translate(0%, 12%);
+    padding:10px;">
+</div>
+<div class="signup-form-container" >
+    <div class="container" id="con1" style=" 
+    border-left-style: solid;
+    border-left-color: #ff0000;
+    border-left-width: 5px ;
+    padding: 10px;
+    width: fit-content;
+    top:50%;
+    height: -webkit-fill--available ;
+    transform: translate(0%, 10%);
+    margin-left:0px;
+    margin-right:0px;
+    ">
+    {% comment %} position: relative;
+    top: 50%;
+    left: 10%;
+    transform: translate(-50%, -50%);
+    float: right;"> {% endcomment %}
+        <h1 style="margin-left:10px;">Sign up for free account</h1>
+        <form method="POST" action='/signup/'>
+            {% csrf_token %}
+            <div class="container" id="con2" style="color: #000;
+             max-width: fit-content;
+             border-radius: 15px;">
+                <div class="row mt-5">
+                    <div class="col-2 mt-1">
+                        <select name="designation" style="height:50px; width:70px;text-align:center;border-radius:5px;border-style:none;">
+                            <option value="Mr.">Mr.</option>
+                            <option value="Mrs.">Mrs.</option>
+                            <option value="Mas.">Ms.</option>
+                            <option value="Miss.">Miss.</option>
+                        </select>
+                    
+                    </div>
+                    <div class="col-5 h-25 mb-3">
+                            <div class="form-floating" style=" text-align:center;margin-left:20px;">
+                                <input type="text" name="fname" class="form-control" id="floatingInput" placeholder="Firstname" required>
+                                <label for="floatingInput">First name</label>                            
+                            </div>
+                        </div>
+                        <div class="col-5 h-25 mb-3">
+                            <div class="form-floating">
+                                <input type="text" name="lname" class="form-control" id="floatingInput" placeholder="Lastname" required>
+                                <label for="floatingInput">Last Name</label>
+                            </div>
+                    </div>
+                </div>   
+                <div class="row mb-3">
+                    <div class="col" >
+                        <div class="form-floating">
+                            <input type="email" id ="floatinglabel" name="email" class="form-control" style="width: 100%" placeholder="name@example.com" required>
+                            <label for="floatinglabel">Email address</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="tel" name="phone" maxlength="10" minlength="10" id ="floatinglabel" class="form-control" placeholder="0000000000" required >
+                            <label for="floatinglabel">Contact Number</label>
+                        </div>
+                    </div>    
+                    <div class="col" style="height:55px;">
+                        <select class="form-select mb-3" style="height:55px;" aria-label=".form-select-lg example" id="psel" onchange="toggleOther()" name="profession" >
+                            <option selected disabled >Proffesion</option>
+                            <option value="Researcher">Researcher</option>
+                            <option value="Professor">Professor</option>
+                            <option value="Student">Student</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        
+                    </div>
+                </div>    
+                    <div class="col mb-3">
+                        <div class="form-floating">
+                           <input type="text" id="oth"  style="display: none;" class="form-control" placeholder="0000000000">
+                           <label for="profession" style="display: none;" id="othlab">Specify Profession: </label>
+                        </div>
+                    </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="tel" name="afiliation"  id ="floatinglabel" class="form-control" placeholder="0000000000" required >
+                            <label for="floatinglabel">Afiliated to Institute:</label>
+                        </div>
+                    </div>    
+                    <div class="col" style="height:55px;">
+                        <div class="form-floating">
+                            <input type="tel" name="role" id ="floatinglabel" class="form-control" placeholder="0000000000" required >
+                            <label for="floatinglabel">Role in the Institute:</label>
+                        </div>
+                    </div>
+                </div>    
+                <div class="row mb-3 " style="margin-left:3px; margin-right:3px;" >
+                    <div class="col">
+                        <div class="pfield">
+                            <div class="form-floating">
+                            <input type="password"  class="form-control" id="floatingPassword" placeholder="Password" name="pass"  required>
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                    </div>
+                </div>
+                    <div class="col">
+                        <div class="cpfield">
+                            <div class="form-floating">
+                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="cpass" required>
+                            <label for="floatingPassword">Confirm Password</label>
+                        </div>
+                    </div>
+                </div> 
+            </div>   
+            <button type="submit" class="btn btn-primary btn-lg shadow-lg" style="float:right;margin-right:12px;">Signup</a>
+            </div>
+            <a href="/login/" style="float:right;margin-right:12px;" class="link-primary">Already have an account?</a>
+        </form>
+    </div>
+</div>    
+</div>    
+
+{% endblock %}
+{% block additional-script %}
+<script>
+    function toggleOther() {
+        var y = document.getElementById("psel");
+        var z = document.getElementById("oth");
+        var w = document.getElementById("othlab");
+        
+        if (y.value === "Other") {
+            z.style.display = "block";
+            z.required = true
+            w.style.display = "block";
+        } else {
+            z.style.display = "none";
+            z.required = false
+            w.style.display = "none";
+        }
+    }
+</script>
+{% endblock additional-script %}
