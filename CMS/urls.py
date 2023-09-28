@@ -12,4 +12,5 @@ urlpatterns = [ path('', views.index, name='index'),
                 path('logout/', views.logout_view, name='logout'),
                 path('authrs-view/',views.author,name="authors-view"),
                 path('reviewer-view/',views.reviewer,name="reviewer-view"),
-                path('programChair-view/',views.programChair,name="programChair-view"),]
+                path('programChair-view/',views.programChair,name="programChair-view"),
+                path('add_conference/',views.add_conference,name="add_conference")]

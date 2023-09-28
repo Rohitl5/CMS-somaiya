@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MinValueValidator,MaxValueValidator
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -66,6 +67,7 @@ class User(AbstractUser):
     
 class Conference(models.Model):
     conferenceTitle = models.CharField(max_length=255,unique=True)
+    programChair = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     about_conference=models.TextField()
     organizing_institute = models.CharField(max_length=255)
     institute_details = models.TextField()
@@ -76,8 +78,9 @@ class Conference(models.Model):
     conference_date=models.DateField()
     conference_venue=models.CharField(max_length=225)
 
+
     def __str__(self):
-        return self.title
+        return self.conferenceTitle
     
     def submissions_open(self):
         return timezone.now().date() <= self.end_date
@@ -85,25 +88,20 @@ class Conference(models.Model):
     def is_chair(self, user):
         return self.chair_set.filter(user=user).exists()
     
-class OrganizingCommittee(models.Model):
-    conferenceTitle = models.ForeignKey(Conference, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    domain = models.CharField(max_length=50)
-    role_insititute=models.TextField
+class committeeImages(models.Model):
+    conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
+    committee_image=models.FileField(upload_to='desktop',null=True)
 
-    class Meta:
-        unique_together = ('conferenceTitle','name')
+    def __str__(self):
+        return self.conference.conferenceTitle
+    
+class conferenceImages(models.Model):
+    conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
+    conference_image=models.FileField(upload_to='desktop',null=True)
 
-class AdvisoryCommittee(models.Model):
-    conferenceTitle = models.ForeignKey(Conference, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    role = models.CharField(max_length=50)
-    insititute=models.TextField
-
-    class Meta:
-        unique_together = ('conferenceTitle','name')
-
-
+    def __str__(self):
+        return self.conference.conferenceTitle
+    
 class Track(models.Model):
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -137,7 +135,7 @@ class Paper(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted')
     keywords=models.TextField()
     submissionDate=models.DateField()
-
+    
 
     def __str__(self):
         return self.title

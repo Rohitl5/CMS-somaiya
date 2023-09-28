@@ -265,28 +265,30 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
       </div>
       <div class="modal-body" style="overflow-x:hidden;">
+        <form enctype="multipart/form-data" action='/add_conference/' method='POST' >
+        {% csrf_token %}
         <div class="row" style="margin-top:10px;">
           <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="text" name="fname" class="form-control" id="floatingInput1" placeholder="Firstname" style="width: 95%" required>
+            <input type="text" name="title" class="form-control" id="floatingInput1" placeholder="Firstname" style="width: 95%" required>
             <label for="floatingInput1" style="margin-left: 10px;">Title</label>                            
           </div>
         </div>
         <div class="row" style="margin-top:10px;">
           <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="text" name="fname" class="form-control" id="floatingInput2" placeholder="Firstname" style="width: 95%" required>
+            <input type="text" name="institute" class="form-control" id="floatingInput2" placeholder="Firstname" style="width: 95%" required>
             <label for="floatingInput2" style="margin-left: 10px;">Organizing Institute</label>                            
           </div>
         </div>
         <div class="row" style="margin-top:10px;">
           <div class="col">
             <div class="form-floating" style=" text-align:center; margin-left:20px;">
-              <textarea type="text" name="fname" class="form-control" id="floatingInput3" placeholder="Firstname" style="min-height: 130px; width: 95%;" required></textarea>
+              <textarea type="text" name="aboutInstitute" class="form-control" id="floatingInput3" placeholder="Firstname" style="min-height: 130px; width: 95%;" required></textarea>
               <label for="floatingInput3">About Institute</label>                            
             </div>
           </div>
           <div class="col">
             <div class="form-floating" style=" text-align:center; margin-left:20px;">
-              <textarea type="text" name="fname" class="form-control" id="floatingInput4" placeholder="Firstname" style="min-height: 130px; width: 95%;" required></textarea>
+              <textarea type="text" name="aboutConference" class="form-control" id="floatingInput4" placeholder="Firstname" style="min-height: 130px; width: 95%;" required></textarea>
               <label for="floatingInput4">About Conference</label>                            
             </div>
           </div>
@@ -296,19 +298,19 @@
         <div class="row" style="margin-top:10px;">
           <div class="col">
             <div class="form-floating" style=" text-align:center; margin-left:20px;">
-              <input type="date" name="fname" class="form-control" id="floatingInput5" placeholder="Firstname" style="width: fit-content;" required>
+              <input type="date" name="submissionDeadline" class="form-control" id="floatingInput5" placeholder="Firstname" style="width: fit-content;" required>
               <label for="floatingInput5">Submission Deadline</label>                            
             </div>
           </div>
           <div class="col">
             <div class="form-floating" style=" text-align:center; margin-left:20px;">
-              <input type="date" name="fname" class="form-control" id="floatingInput6" placeholder="Firstname" style="width: fit-content;" required>
+              <input type="date" name="notificationOfAcceptance" class="form-control" id="floatingInput6" placeholder="Firstname" style="width: fit-content;" required>
               <label for="floatingInput6">Notification of Acceptance</label>                            
             </div>
           </div>
           <div class="col">
             <div class="form-floating" style=" text-align:center; margin-left:20px;">
-              <input type="date" name="fname" class="form-control" id="floatingInput7" placeholder="Firstname" style="width: fit-content;" required>
+              <input type="date" name="registrationDeadline" class="form-control" id="floatingInput7" placeholder="Firstname" style="width: fit-content;" required>
               <label for="floatingInput7">Registration Deadline</label>                            
             </div>
           </div>
@@ -316,108 +318,45 @@
         <div class="row" style="margin-top:10px;">
           <div class="col-auto">
             <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="date" name="fname" class="form-control" id="floatingInput8" placeholder="Firstname" style="width: fit-content;" required>
+            <input type="date" name="cameraReadyPapers" class="form-control" id="floatingInput8" placeholder="Firstname" style="width: fit-content;" required>
             <label for="floatingInput8">Camera Ready Papers</label>                            
           </div>
           </div>
           <div class="col-auto">
             <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="date" name="fname" class="form-control" id="floatingInput9" placeholder="Firstname" style="width: fit-content;" required>
+            <input type="date" name="conferenceDate" class="form-control" id="floatingInput9" placeholder="Firstname" style="width: fit-content;" required>
             <label for="floatingInput9">Conference Date</label>                            
           </div>
           </div>
         </div>
         <div class="row" style="margin-top: 20px;">
           <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="text" name="fname" class="form-control" id="floatingInput10" placeholder="Firstname" style="width: 95%;" required>
+            <input type="text" name="venue" class="form-control" id="floatingInput10" placeholder="Firstname" style="width: 95%;" required>
             <label for="floatingInput10" style="margin-left: 10px;">Conference Venue</label>                            
           </div>
         </div>
         
         <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Committees</label></strong>
-        <center><label style="margin-bottom: 5px;">Organizing Committee</label></center>
-        <div id="attributes1"><div class="attr1">
-          <div class="row" style="margin-top:10px;">
-                
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput11" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput11">Name</label>                            
-                  </div>
-                </div>
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput12" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput12">Domain</label>                            
-                  </div>
-                </div>
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput13" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput13">Role and Institute</label>                            
-                  </div>
-                </div>
-              </div>
-          <center>
-          <button class="btn btn-danger remove1" type="button"><i class="fa fa-minus" aria-hidden="true"></i></button>
-          </center>
-        </div>
-        </div>
-        <center>
-          <button class="btn btn-large btn-success add1" type="button"  style="margin-top:10px ; margin-bottom:10px;">Add more members</button>
-        </center>
-        <center><label style="margin-top: 10px; margin-bottom: 5px;">Advisory Committee</label></center>
-        <div id="attributes"><div class="attr">
-          <div class="row" style="margin-top:10px;">
-                
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput11" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput11">Name</label>                            
-                  </div>
-                </div>
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput12" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput12">Role</label>                            
-                  </div>
-                </div>
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput13" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput13">Institute</label>                            
-                  </div>
-                </div>
-              </div>
-              <center>
-                <button class="btn btn-danger remove" type="button"><i class="fa fa-minus" aria-hidden="true"></i></button>
-              </center>
-        </div>
-        </div>
-        <center>
-          <button class="btn btn-large btn-success add" type="button" style="margin-top:10px ; margin-bottom:10px;">Add more members</button>
-        </center>
-        <div id="attributes2"><div class="attr2">
+        <center><label style="margin-bottom: 5px;">Add images containing details of various committees</label></center>
         <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
           <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="file" name="fname" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" required>
-            <label for="floatingInput17" style="margin-left: 10px;">Images of Conference</label>                            
+            <input type="file" name="committeeImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple required>
+            <label for="floatingInput17" style="margin-left: 10px;">Committee details</label>                            
           </div>
         </div>
-        <center>
-          <button class="btn btn-danger remove2" type="button"><i class="fa fa-minus" aria-hidden="true"></i></button>
-        </center>
+        <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Images</label></strong>
+        <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
+          <div class="form-floating" style=" text-align:center; margin-left:20px;">
+            <input type="file" name="conferenceImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple required>
+            <label for="floatingInput17" style="margin-left: 10px;">Images related to Conference and Institute</label>                            
+          </div>
         </div>
-        </div>
-        <center>
-         <button class="btn btn-large btn-success add2" type="button" style="margin-top:10px ; margin-bottom:10px;">Add more Images</button>
-        </center>
       </div>
-      
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Create</button>
+        <button type="submit" class="btn btn-primary">Create</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
@@ -447,7 +386,7 @@
     <script>
      let suggestions = [
      {% for conference in conferences %}
-     "{{conference.title}}",
+     "{{conference.conferenceTitle}}",
  {% endfor %}
 ];
 
@@ -495,111 +434,7 @@ function showSuggestions(list){
     resultBox.innerHTML = listData;
 }
 
-{% comment %} code for adding more row on pressing add button {% endcomment %}
-/* Variables */
-var row = $(".attr");
 
-function addRow() {
-  row.clone(true, true).appendTo("#attributes");
-}
-
-function removeRow(button) {
-  button.closest("div.attr").remove();
-}
-
-$('#attributes .attr:first-child').find('.remove').hide();
-
-/* Doc ready */
-$(".add").on('click', function () {
-  addRow();  
-  if($("#attributes .attr").length > 1) {
-    //alert("Can't remove row.");
-    $(".remove").show();
-  }
-});
-$(".remove").on('click', function () {
-  if($("#attributes .attr").length == 1) {
-    //alert("Can't remove row.");
-    $(".remove").hide();
-  } else {
-    removeRow($(this));
-    
-    if($("#attributes .attr").length == 1) {
-        $(".remove").hide();
-    }
-    
-  }
-});
-
-/* Variables */
-var row1 = $(".attr1");
-
-function addRow1() {
-  row1.clone(true, true).appendTo("#attributes1");
-}
-
-function removeRow1(button) {
-  button.closest("div.attr1").remove();
-}
-
-$('#attributes1 .attr1:first-child').find('.remove1').hide();
-
-/* Doc ready */
-$(".add1").on('click', function () {
-  addRow1();  
-  if($("#attributes1 .attr1").length > 1) {
-    //alert("Can't remove row.");
-    $(".remove1").show();
-  }
-});
-$(".remove1").on('click', function () {
-  if($("#attributes1 .attr1").length == 1) {
-    //alert("Can't remove row.");
-    $(".remove1").hide();
-  } else {
-    removeRow1($(this));
-    
-    if($("#attributes1 .attr1").length == 1) {
-        $(".remove1").hide();
-    }
-    
-  }
-});
-
-/* Variables */
-var row2 = $(".attr2");
-
-function addRow2() {
-  row2.clone(true, true).appendTo("#attributes2");
-}
-
-function removeRow2(button) {
-  button.closest("div.attr2").remove();
-}
-
-$('#attributes2 .attr2:first-child').find('.remove2').hide();
-
-/* Doc ready */
-$(".add2").on('click', function () {
-  addRow2();  
-  if($("#attributes2 .attr2").length > 1) {
-    //alert("Can't remove row.");
-    $(".remove2").show();
-  }
-});
-$(".remove2").on('click', function () {
-  if($("#attributes2 .attr2").length == 1) {
-    //alert("Can't remove row.");
-    $(".remove2").hide();
-  } else {
-    removeRow2($(this));
-    
-    if($("#attributes2 .attr2").length == 1) {
-        $(".remove2").hide();
-    }
-    
-  }
-});
 
 </script>
 {% endblock %} 
