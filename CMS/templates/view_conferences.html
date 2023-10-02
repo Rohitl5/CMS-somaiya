@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 
 {% block title %}View Conferences - KJSIT Conference Management System{% endblock %}
+
+{% block signup_button %}
+<div class="signup-button">
+  {% if request.user.is_authenticated %}
+  <a class="btn btn-primary btn-lg shadow-lg" href="/logout/" style="margin-right:12px;" role="button">
+    Logout 
+  </a>
+  {% else%}
+  <a class="btn btn-primary btn-lg shadow-lg" href="/signup" style="margin-right:12px;" role="button">
+    Signup 
+  </a>
+  {% endif %}
+</div>
+{% endblock %}
+
 {% block additional-css %}
 @media only screen and (max-width: 430px) {
   .side-bar{
@@ -18,7 +33,7 @@
 
 {% block content %}
     <div class="row" id="conf-header" style="background: linear-gradient(to right, rgb(255, 65, 108), rgb(255, 75, 43));margin-top:100px;height:300px;">
-       <center><h1 style="color:white;margin-top:30px;">((Conference Name))</h1></center>
+       <center><h1 style="color:white;margin-top:30px;">{{conference.conferenceTitle}}</h1></center>
        <center><div class="btn-group dropend shadow-lg" role="group" style="height:50px;width:100px;border-radius:10px">
         <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           Join As
@@ -38,7 +53,7 @@
           </div>
           <div class="modal-body">
             <div class="input-group">
-              <span class="input-group-text">Area of Interests:</span>
+              <span class="input-group-text">Area of Interests:<br>(Please notify as per tracks)</span>
               <textarea class="form-control" aria-label="With textarea"></textarea>
             </div>
           </div>
@@ -127,38 +142,21 @@
        <div class="main-body " style="margin-top:30px;flex:75%;height:fit-content;max-width:600px;">
         <div id="about-conf" class="tabcontent">
          <div class="aboutconference" style="background-color:white;">
-            <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;display:block;">&nbsp;((conference name))</a>
+            <a style="min-height:60px;text-align: left;padding-left:10px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;display:block;">&nbsp;{{conference.conferenceTitle}}</a>
             <div class="text" style="margin:15px;">
               <center>
                 <h6 style="text-align:left; padding-bottom:30px;padding-left:10px;padding-right:10px;">
-                  ICAST-2023 is the 6th International Conference organized by K. J Somaiya Institute of Technology, Sion,
-                  Mumbai in association with University of Mumbai. The aim of the conference is to bring together academicians,
-                  researchers, developers, engineers, students, industrial experts and practitioners working in India and abroad 
-                  promoting research and developmental activities & scientific information interchange in the field of Computer
-                  Sciences, Advances in Signal Processing, Wireless Communications & Networking, Applied Sciences and Humanities
-                  and Interdisciplinary Studies to a common forum.The researchers presenting their work and the attendees attending
-                  the sessions will have the fine blend of knowledge and information exchange with the latest advancement & future 
-                  directions in the mentioned emerging areas as various tracks listed. The conference tracks will be addressed by 
-                  international delegates sharing the research and development activities in the field of science and technology under 
-                  higher education, worldwide.
+                 {{conference.about_conference}}
                 </h6>
               </center>
             </div>
          </div>
          <div class="about-institute"  style="background-color:white;">
-          <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;">&nbsp;About ((Institute name))</a>
+          <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;">&nbsp;About {{conference.organizing_institute}}</a>
           <div class="text" style="margin:15px;"> 
             <center>
               <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
-                K. J. Somaiya Institute of Technology (KJSIT) is one of the reputed engineering institute approved by AICTE, 
-                DTE and permanently affiliated to the University of Mumbai. It was established by the Somaiya Trust in the year
-                2001, at Sion campus in the heart of Mumbai city, Maharashtra, India. The institute provides quality engineering 
-                education in the modern fields of technology disciplines at UG level viz. Computer Engineering, Information Technology,
-                Electronics Engineering, Electronics & Telecommunication Engineering and Artificial Intelligence & Data Science and 
-                PG in Artificial Intelligence. The institute aims to provide the necessary dynamism in the light of expanding knowledge 
-                and changing socio-economic requirements of the modern society.KJSIT is an Autonomous institute further accredited till 
-                December 2026 with 'A' Grade by the National Assessment & Accreditation Council (NAAC) of India with the CGPA of 3.21 and 
-                three programs of the institute are accredited by National Board of Accreditation, India (NBA) till June 2025.
+                {{conference.institute_details}}
               </h6>
             <center>
           </div>    
@@ -168,14 +166,24 @@
           <div class="text" style="margin:15px;"> 
             <center>
               <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
-                ((Venue))
+                {{conference.conference_venue}}
               </h6>
             <center>
           </div>
          </div>
         </div>    
-        <div id="callForpapers" class="tabcontent">
-          Tracks And Sessions
+        <div id="callForpapers" class="tabcontent" style="width:600px;">
+          {% for track in tracks  %}
+          <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;">&nbsp;{{track.title}}</a>
+            <div class="text" style="margin:15px;background-color:white;"> 
+              <center>
+                <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                  {{track.subDomains}}
+                </h6>
+              <center>
+            </div>
+          {% endfor %}
+            
         </div> 
         <div id="dates" class="tabcontent">
           <div class="imp_dates" style="background-color:white;">
@@ -183,30 +191,30 @@
             <div class="text" style="margin:15px;"> 
               <center>
               <div style="overflow-x:auto">
-                <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;width:600px;">
                   <tr>
                     <td>Events</td>
                     <td>Dates</td>
                   </tr>
                   <tr>
                     <td>Deadline for Submission of Papers</td>
-                    <td>((Date))</td>
+                    <td>{{conference.submission_deadline}}</td>
                   </tr>
                   <tr>
                     <td>Notification of Acceptance</td>
-                    <td>((Date))</td>
+                    <td>{{conference.notification_of_acceptance}}</td>
                   </tr>
                   <tr>
                     <td>Last Date of Registration</td>
-                    <td>((Date))</td>
+                    <td>{{conference.registration_deadline}}</td>
                   </tr>
                   <tr>
                     <td>Camera Ready Papers</td>
-                    <td>((Date))</td>
+                    <td>{{conference.camera_ready_papers}}</td>
                   </tr>
                   <tr>
                     <td>Conference Date</td>
-                    <td>((Date))</td>
+                    <td>{{conference.conference_date}}</td>
                   </tr>
                 </table>
               </div>
@@ -214,10 +222,10 @@
             </div>
           </div>
         </div>
-        <div id="committee" class="tabcontent">
+        <div id="committee" class="tabcontent" style="width:600px;">
             committee
         </div>
-        <div id="photos" class="tabcontent">
+        <div id="photos" class="tabcontent" style="width:600px;">
              Images
         </div>
        </div>

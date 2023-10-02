@@ -67,16 +67,16 @@ class User(AbstractUser):
     
 class Conference(models.Model):
     conferenceTitle = models.CharField(max_length=255,unique=True)
-    programChair = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
-    about_conference=models.TextField()
+    programChair = models.ForeignKey(User, on_delete=models.CASCADE)
+    about_conference=models.TextField(null=True)
     organizing_institute = models.CharField(max_length=255)
-    institute_details = models.TextField()
+    institute_details = models.TextField(null=True)
     submission_deadline = models.DateField()
     notification_of_acceptance = models.DateField()
     registration_deadline=models.DateField()
     camera_ready_papers=models.DateField()
     conference_date=models.DateField()
-    conference_venue=models.CharField(max_length=225)
+    conference_venue=models.CharField(max_length=225,null="True")
 
 
     def __str__(self):
@@ -86,8 +86,11 @@ class Conference(models.Model):
         return timezone.now().date() <= self.end_date
     
     def is_chair(self, user):
-        return self.chair_set.filter(user=user).exists()
-    
+        if user==self.programChair:
+           return 1
+        else :
+           return 0
+
 class committeeImages(models.Model):
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
     committee_image=models.FileField(upload_to='desktop',null=True)
@@ -105,10 +108,13 @@ class conferenceImages(models.Model):
 class Track(models.Model):
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    subDomains = models.TextField()
+    
+    class Meta:
+        unique_together = ['conference', 'title']
 
     def __str__(self):
-        return self.title
+        return self.conference
 
 
 class Author(models.Model):

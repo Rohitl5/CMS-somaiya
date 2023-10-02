@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 
 {% block title %}Program Chair View - KJSIT Conference Management System{% endblock title %}
+
+{% block signup_button %}
+<div class="signup-button">
+  <a class="btn btn-primary btn-lg shadow-lg" href="/logout/" style="margin-right:12px;" role="button">
+    Logout
+  </a>
+  
+</div>
+{% endblock %}
+
 {% block additional-css %}
 @media only screen and (max-width: 770px) {
     .col{
@@ -30,7 +40,7 @@
 {% endblock additional-css %}
 {% block content %}
     <div class="row" id="conf-header" style="background: linear-gradient(to right, rgb(255, 65, 108), rgb(255, 75, 43));margin-top:100px;height:300px;">
-       <center><h1 style="color:white;margin-top:30px;">((Conference Name))</h1></center>
+       <center><h1 style="color:white;margin-top:30px;">{{conference.conferenceTitle}}</h1></center>
        <center><div class="options" role="group" style="height:50px;width:100px;border-radius:10px;display:flex;justify-content:center;">
         <div class="px-3">
           <button type="button" style="width:100px;" class="btn btn-light shadow-lg" data-bs-toggle="modal" data-bs-target="#myModal2">
@@ -38,8 +48,8 @@
           </button>
         </div>
         <div class="px-3">
-          <button type="button" style="width:100px;" class="btn btn-light shadow-lg">
-           Send invitation to Reviewer
+          <button type="button" style="width:100px;" class="btn btn-light shadow-lg" data-bs-toggle="modal" data-bs-target="#myModal3">
+           Invite Reviewer
           </button>
         </div>
         <div class="px-3">
@@ -110,43 +120,56 @@
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header" style="background-color:#a70000;color:#fff;">
-              <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Conference Details</h5>
+              <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Edit Conference Details</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
             </div>
             <div class="modal-body" style="overflow-x:hidden;">
-              
+              <form enctype="multipart/form-data"  method='POST' action="/conference/{{conference.id}}/programChair/editConference/" >
+              {% csrf_token %}
+              <div class="row" style="margin-top:10px;">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <input type="text" name="title" class="form-control" id="floatingInput1" placeholder="Firstname" style="width: 95%" required value="{{conference.conferenceTitle}}" disabled>
+                  <label for="floatingInput1" style="margin-left: 10px;">Title</label>                            
+                </div>
+              </div>
+              <div class="row" style="margin-top:10px;">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <input type="text" name="institute" class="form-control" id="floatingInput2" placeholder="Firstname" style="width: 95%" required value="{{conference.organizing_institute}}" disabled>
+                  <label for="floatingInput2" style="margin-left: 10px;">Organizing Institute</label>                            
+                </div>
+              </div>
               <div class="row" style="margin-top:10px;">
                 <div class="col">
                   <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <textarea type="text" name="fname" class="form-control" id="floatingInput3" placeholder="Firstname" style="min-height: 130px; width: 95%;" required></textarea>
+                    <textarea type="text" name="aboutInstitute" class="form-control" id="floatingInput3" placeholder="Firstname" style="min-height: 130px; width: 95%;" >{{conference.institute_details}}</textarea>
                     <label for="floatingInput3">About Institute</label>                            
                   </div>
                 </div>
                 <div class="col">
                   <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <textarea type="text" name="fname" class="form-control" id="floatingInput4" placeholder="Firstname" style="min-height: 130px; width: 95%;" required></textarea>
+                    <textarea type="text" name="aboutConference" class="form-control" id="floatingInput4" placeholder="Firstname" style="min-height: 130px; width: 95%;">{{conference.about_conference}}</textarea>
                     <label for="floatingInput4">About Conference</label>                            
                   </div>
                 </div>
               </div>
-              <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Change Important Dates</label></strong>
+              <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Important Dates</label></strong>
              
               <div class="row" style="margin-top:10px;">
                 <div class="col">
                   <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="date" name="fname" class="form-control" id="floatingInput5" placeholder="Firstname" style="width: fit-content;" required>
+                    <input type="date" name="submissionDeadline" class="form-control" id="floatingInput5" placeholder="Firstname" style="width: fit-content; " value="{{conference.submission_deadline|date:"Y-m-d"}}" required>
                     <label for="floatingInput5">Submission Deadline</label>                            
                   </div>
                 </div>
                 <div class="col">
                   <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="date" name="fname" class="form-control" id="floatingInput6" placeholder="Firstname" style="width: fit-content;" required>
+                    <input type="date" name="notificationOfAcceptance" class="form-control" id="floatingInput6" placeholder="Firstname" style="width: fit-content;"  value="{{conference.notification_of_acceptance|date:"Y-m-d"}}" required>
                     <label for="floatingInput6">Notification of Acceptance</label>                            
                   </div>
                 </div>
                 <div class="col">
                   <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="date" name="fname" class="form-control" id="floatingInput7" placeholder="Firstname" style="width: fit-content;" required>
+                    <input type="date" name="registrationDeadline" class="form-control" id="floatingInput7" placeholder="Firstname" style="width: fit-content;" value="{{conference.registration_deadline|date:"Y-m-d"}}" required>
                     <label for="floatingInput7">Registration Deadline</label>                            
                   </div>
                 </div>
@@ -154,103 +177,45 @@
               <div class="row" style="margin-top:10px;">
                 <div class="col-auto">
                   <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                  <input type="date" name="fname" class="form-control" id="floatingInput8" placeholder="Firstname" style="width: fit-content;" required>
+                  <input type="date" name="cameraReadyPapers" class="form-control" id="floatingInput8" placeholder="Firstname" style="width: fit-content;" value="{{conference.camera_ready_papers|date:"Y-m-d"}}" required>
                   <label for="floatingInput8">Camera Ready Papers</label>                            
                 </div>
                 </div>
                 <div class="col-auto">
                   <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                  <input type="date" name="fname" class="form-control" id="floatingInput9" placeholder="Firstname" style="width: fit-content;" required>
+                  <input type="date" name="conferenceDate" class="form-control" id="floatingInput9" placeholder="Firstname" style="width: fit-content;" required value="{{conference.conference_date|date:"Y-m-d"}}">
                   <label for="floatingInput9">Conference Date</label>                            
                 </div>
                 </div>
               </div>
-              
+              <div class="row" style="margin-top: 20px;">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <input type="text" name="venue" class="form-control" id="floatingInput10" placeholder="Firstname" style="width: 95%;" value="{{conference.conference_venue}}">
+                  <label for="floatingInput10" style="margin-left: 10px;">Conference Venue</label>                            
+                </div>
+              </div>
               
               <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Committees</label></strong>
-        <center><label style="margin-bottom: 5px;">Organizing Committee</label></center>
-        <div id="attributes1"><div class="attr1">
-          <div class="row" style="margin-top:10px;">
-                
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput11" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput11">Name</label>                            
-                  </div>
-                </div>
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput12" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput12">Domain</label>                            
-                  </div>
-                </div>
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput13" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput13">Role and Institute</label>                            
-                  </div>
+              <center><label style="margin-bottom: 5px;">Add images containing details of various committees</label></center>
+              <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <input type="file" name="committeeImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
+                  <label for="floatingInput17" style="margin-left: 10px;">Committee details</label>                            
                 </div>
               </div>
-          <center>
-          <button class="btn btn-danger remove1" type="button"><i class="fa fa-minus" aria-hidden="true"></i></button>
-          </center>
-        </div>
-        </div>
-        <center>
-          <button class="btn btn-large btn-success add1" type="button"  style="margin-top:10px ; margin-bottom:10px;">Add more members</button>
-        </center>
-        <center><label style="margin-top: 10px; margin-bottom: 5px;">Advisory Committee</label></center>
-        <div id="attributes"><div class="attr">
-          <div class="row" style="margin-top:10px;">
-                
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput11" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput11">Name</label>                            
-                  </div>
-                </div>
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput12" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput12">Role</label>                            
-                  </div>
-                </div>
-                <div class="col-auto mb-3">
-                  <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput13" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput13">Institute</label>                            
-                  </div>
+              <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Images</label></strong>
+              <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <input type="file" name="conferenceImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
+                  <label for="floatingInput17" style="margin-left: 10px;">Images related to Conference and Institute</label>                            
                 </div>
               </div>
-              <center>
-                <button class="btn btn-danger remove" type="button"><i class="fa fa-minus" aria-hidden="true"></i></button>
-              </center>
-        </div>
-        </div>
-        <center>
-          <button class="btn btn-large btn-success add" type="button" style="margin-top:10px ; margin-bottom:10px;">Add more members</button>
-        </center>
-        <div id="attributes2"><div class="attr2">
-        <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
-          <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="file" name="fname" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" required>
-            <label for="floatingInput17" style="margin-left: 10px;">Images of Conference</label>                            
-          </div>
-        </div>
-        <center>
-          <button class="btn btn-danger remove2" type="button"><i class="fa fa-minus" aria-hidden="true"></i></button>
-        </center>
-        </div>
-        </div>
-        <center>
-         <button class="btn btn-large btn-success add2" type="button" style="margin-top:10px ; margin-bottom:10px;">Add more Images</button>
-        </center>
-      </div>
-      
+            </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save Changes</button>
+              <button type="submit" class="btn btn-primary">Edit</button>
             </div>
+          </form>
           </div>
         </div>
     </div>
@@ -263,25 +228,56 @@
               <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Track Details</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
             </div>
+            <form method="POST" action="/conference/{{conference.id}}/programChair/addTrack/" >
+            {% csrf_token %}
+              <div class="modal-body" style="overflow-x:hidden;">
+                <center>
+                  <div class="form-floating" style=" text-align:center; margin-left:20px;margin-bottom:10px;">
+                      <input type="text" name="title" class="form-control" id="floatingInput15" placeholder="Firstname" style="width: 95%" required>
+                      <label for="floatingInput15">Track Name</label>                            
+                  </div>
+                  <div class="form-floating" style=" text-align:center; margin-left:20px;margin-bottom:10px;">
+                      <textarea type="text" name="subDomains" class="form-control" id="floatingInput15" placeholder="Firstname" style="width: 95%;min-height:100px;" required></textarea>
+                      <label for="floatingInput15">Add Sub-domains in proper order</label>                            
+                  </div>
+                </center>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add Track</button>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
+    {% comment %} Modal to invite reviewer {% endcomment %}
+    <div class="modal fade dark-modal" id="myModal3" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color:#a70000;color:#fff;">
+            <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Invite Reviewer</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
+          </div>
+          <form method="POST" action="/conference/{{conference.id}}/programChair/inviteReviewer/" >
+          {% csrf_token %}
             <div class="modal-body" style="overflow-x:hidden;">
               <center>
                 <div class="form-floating" style=" text-align:center; margin-left:20px;margin-bottom:10px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput15" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput15">Track Name</label>                            
+                    <input type="text" name="reviewer_email" class="form-control" id="floatingInput15" placeholder="Firstname" style="width: 95%" required>
+                    <label for="floatingInput15">Enter email-id of the reviewer to be added</label>                            
                 </div>
-                <div class="form-floating" style=" text-align:center; margin-left:20px;margin-bottom:10px;">
-                    <input type="text" name="fname" class="form-control" id="floatingInput15" placeholder="Firstname" style="width: 95%" required>
-                    <label for="floatingInput15">Subtrack Name</label>                            
-                </div>
+                An invitation mail will be sent to the specified mail-id
               </center>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Add Track</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
             </div>
-          </div>
+          </form>
         </div>
-    </div>
+      </div>
+  </div>
 {% endblock content%}
 
 {% block additional-script %}
