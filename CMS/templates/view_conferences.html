@@ -9,7 +9,7 @@
     Logout 
   </a>
   {% else%}
-  <a class="btn btn-primary btn-lg shadow-lg" href="/signup" style="margin-right:12px;" role="button">
+  <a class="btn btn-primary btn-lg shadow-lg" href="/signup/" style="margin-right:12px;" role="button">
     Signup 
   </a>
   {% endif %}
@@ -39,7 +39,7 @@
           Join As
         </button>
         <ul class="dropdown-menu" >
-          <li><a class="dropdown-item" href="#">Author</a></li>
+          <li><a class="dropdown-item" href="/conference/{{conference.id}}/request_author/">Author</a></li>
           <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Reviewer</a></li>
         </ul>
        </div>
@@ -52,15 +52,19 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+        <form method="POST" action="/conference/{{conference.id}}/request_reviewer/">
+            {% csrf_token %}
             <div class="input-group">
               <span class="input-group-text">Area of Interests:<br>(Please notify as per tracks)</span>
-              <textarea class="form-control" aria-label="With textarea"></textarea>
+              <textarea class="form-control" name="areaOfInterest" aria-label="With textarea"></textarea>
+              <p><br>After you press "Submit" request will be sent to the Program Chair. We will notify you, once Program Chair accepts the request.</p>
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </div>
+        </form>
         </div>
       </div>
     </div>

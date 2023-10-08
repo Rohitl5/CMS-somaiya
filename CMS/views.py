@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect,HttpResponseForbidden
-from .models import Conference,committeeImages,conferenceImages,Track
+from .models import Conference,committeeImages,conferenceImages,Track,Author,Reviewer
 from django.conf import settings
 from django.core.mail import send_mail
 
@@ -15,8 +15,8 @@ def index(request):
 
 
 def conferences(request,conference_id):
-    conference = get_object_or_404(Conference, id=conference_id)
-    tracks= Track.objects.filter(conference_id=conference_id).all().values()
+    conference = get_object_or_404(Conference, conferenceTitle=conference_id)
+    tracks= Track.objects.filter(conference_id=conference.id).all().values()
     return render(request, 'view_conferences.html',context={"conference":conference,"tracks":tracks})
 
 def add_conference(request):
@@ -62,7 +62,7 @@ def add_conference(request):
             )
             committee_images.save()
 
-        return redirect('CMS:profile')
+        return redirect('/conference/'+str(conference.id)+'/programChair/')
      else:
          return HttpResponseRedirect(request.path_info)
     else:
@@ -109,6 +109,7 @@ def edit_conference(request,conference_id):
 
        return redirect('/conference/'+str(conference_id)+'/programChair/')
 
+
 def inviteReviewer(request,conference_id):
     if request.method=="POST":
         reviewer_email=request.POST["reviewer_email"]
@@ -121,21 +122,78 @@ def inviteReviewer(request,conference_id):
         send_mail( subject, message, email_from, recipient_list )
         return redirect('/conference/'+str(conference_id)+'/programChair/')
 
+
+def author_request(request,conference_id):
+    if user.is_authenticated:
+          conference= Conference.objects.get(id=conference_id)
+          
+          subject = 'Request to join as an author'
+          message = 'Respected Program Chair,\n'+str(request.user.first_name)+' '+str(request.user.last_name)+' has request to enter "'+str(conference.conferenceTitle)+'"\nAuthor Deatils are:\nEmail- '+str(request.user.email)+'\nProfession- '+str(request.user.profession)+'\nAfiliated to '+str(request.user.afiliation)+' as '+str(request.user.role)+'\nTo add author click on the link: http://127.0.0.1:8000/conference/5/add_author='+str(request.user.id)+'/\n\nThankyou'
+          email_from = settings.EMAIL_HOST_USER
+          recipient_list = [conference.programChair ]
+          send_mail( subject, message, email_from, recipient_list )
+          return redirect('/conference/'+str(conference_id))
+    else:
+        return render(request,'login.html')
+    
 @login_required
-def author(request):
+def add_author(request,conference_id,user_id):
+    conference = get_object_or_404(Conference, id=conference_id)
+
+    if not conference.is_chair(request.user):
+        return HttpResponseForbidden("You are not authorized to add authors to this conference.")
+    author = user.objects.get(id=user_id)
+    
+    new_author=Author.objects.create(user=author)
+    new_author.conferences.add(conference)
+
+    new_author.save()
+    return redirect('/conference/'+str(conference_id)+'/programChair/')  
+
+def reviewer_request(request,conference_id):
+    if user.is_authenticated:
+          if request.method=="POST":
+           conference= Conference.objects.get(id=conference_id)
+           areaOfInterest=request.POST["areaOfInterest"]
+
+           subject = 'Request to join as an reviewer'
+           message = 'Respected Program Chair,\n'+str(request.user.first_name)+' '+str(request.user.last_name)+' has request to enter "'+str(conference.conferenceTitle)+'"\nReviewer Deatils are:\nEmail- '+str(request.user.email)+'\nProfession- '+str(request.user.profession)+'\nAfiliated to '+str(request.user.afiliation)+' as '+str(request.user.role)+'\nHis\Hers Area of interests are '+areaOfInterest+'\nTo add reviewer click on the link: http://127.0.0.1:8000/conference/5/add_reviewer='+str(request.user.id)+'/\n\nThankyou'
+           email_from = settings.EMAIL_HOST_USER
+           recipient_list = [conference.programChair ]
+           send_mail( subject, message, email_from, recipient_list )
+           return redirect('/conference/'+str(conference_id))
+    else:
+        return render(request,'login.html')
+
+@login_required
+def add_reviewer(request,conference_id,user_id):
+    conference = get_object_or_404(Conference, id=conference_id)
+
+    if not conference.is_chair(request.user):
+        return HttpResponseForbidden("You are not authorized to add reviewers to this conference.")
+    
+    reviewer = user.objects.get(id=user_id)
+    new_reviewer=Reviewer.objects.create(user=reviewer)
+    new_reviewer.save()
+
+    return redirect('/conference/'+str(conference_id)+'/programChair/')  
+
+@login_required
+def author(request,conference_id):
     return render(request, 'authrs-view.html')
 
 @login_required
-def reviewer(request):
+def reviewer(request,conference_id):
     return render(request, 'reviewer-view.html')
 
 @login_required
 def programChair(request,conference_id):
     conference = get_object_or_404(Conference, id=conference_id)
+    authors= Author.objects.filter(conferences=conference).all().values()
     if not conference.is_chair(request.user):
         return HttpResponseForbidden('You are not authorized.')
     else:
-        return render(request, 'program_chair.html',{"conference":conference})
+        return render(request, 'program_chair.html',context={"conference":conference,"authors":authors})
 
 @login_required
 def addTrack(request,conference_id):
@@ -169,6 +227,7 @@ def signup(request):
 
 def login_view(request):
     if request.method == 'POST':
+            print(request.POST)
             email=request.POST["email"]
             password=request.POST["pass"]
             user = authenticate(request,email=email,password=password)
@@ -179,7 +238,7 @@ def login_view(request):
                 raise ValueError("Invalid credentials")
     return render(request, 'login.html')
 
-
+@login_required
 def profile(request):
     conferences = Conference.objects.values()
     return render(request, 'profile.html',{"conferences":conferences})

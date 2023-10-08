@@ -155,7 +155,6 @@ class Paper(models.Model):
 class Reviewer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     papers = models.ManyToManyField(Paper)
-    areaOfInterest = models.TextField()
 
     def __str__(self):
         return self.user.email
@@ -181,3 +180,4 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review for {self.paper.title} by {self.reviewer.user.email}"
+    
