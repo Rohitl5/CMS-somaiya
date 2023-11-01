@@ -12,6 +12,9 @@
 {% endblock %}
 
 {% block additional-css %}
+th, td {
+  padding: 5px;
+}
 @media only screen and (max-width: 770px) {
     .col{
       min-width:-webkit-fill-available;
@@ -78,27 +81,212 @@
           </div>
 
         <div class="content-main" style="margin-left:10px;width:-webkit-fill-available;flex:auto;margin-top:30px;background-color:white;">
-            <div id="papers" class="tabcontent">
-              <table style="margin-bottom:5px;">
+            <div id="papers" class="tabcontent" style="max-width:390px;">
+              {% if not uploadedpapers %}
+                 
+                 <div class="text" style="margin:15px;background-color:white;"> 
+                   <center>
+                     <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                       No papers uploaded yet.
+                     </h6>
+                   <center>
+                 </div>
+              {% else %}
+              <table style="margin-bottom:5px;border-collapse:separate; 
+              border-spacing: 0 1em;">
+
+                {% for paper in uploadedpapers %}
                 <tr>
-                  <th class="title-column">&nbsp;&nbsp;(Title with link of paper)</th>
-                  <th style="font-weight:normal;padding-right:30px;">
-                    <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                      (Assign Reviewer or View Review)
-                    </button>
+                  <th class="title-column">&nbsp;&nbsp;{{paper.papertitle}}</th>
+                  <th>
+                  <button class="btn btn-primary" style="border-radius:50%" type="button"  data-bs-toggle="modal" data-bs-target="#viewpaperdata{{paper.papertitle}}">
+                    <i class="fas fa-info" ></i>
+                  </button>
+                  
+                  <div class="modal fade" id="viewpaperdata{{paper.papertitle}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                     <div class="modal-dialog modal-dialog-centered">
+                       <div class="modal-content">
+                         <div class="modal-header">
+                           <h1 class="modal-title fs-5" id="exampleModalLabel">Paper Information</h1>
+                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                         </div>
+                         <div class="modal-body">
+                          <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                           
+                            <tr>
+                              <th> Title </th>
+                              <th>{{paper.papertitle}}</th>
+                              
+                            </tr>
+                            <tr>
+                              <th>Author</th>
+                              <td>
+                               {{paper.authors.user.first_name}} {{paper.authors.user.last_name}}
+                                {% if paper.otherauthors %}
+                                  , {{ paper.otherauthors }}
+                                {% endif %}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Abstract </td>
+                              <td>{{paper.abstract}}</td>
+                              
+                            </tr>
+                            <tr>
+                              <td>Track </td>
+                              <td>{{paper.track.title}}</td>
+                              
+                            </tr>
+                            <tr>
+                              <td>Keywords </td>
+                              <td>{{paper.keywords}}</td>
+                              
+                            </tr>
+                            <tr>
+                              <td>Submission Date </td>
+                              <td>{{paper.submissionDate}}</td>
+                              
+                            </tr>
+                          </table>
+                          
+                          <div class="row">
+                           <form method="POST" action="paper={{paper.id}}/">
+                           {% csrf_token %}
+                           {% if paper.status == 'submitted' %}
+                           <div class="row">
+                            <div class="col-sm">
+                              <select class="form-select" style="margin-top:5px" aria-label="Default select example" name="reviewer" required>
+                                <option selected>Assign Reviewer</option>
+                                 {% for reviewer in reviewers %}
+                                   <option  value="{{reviewer.user.id}}"> {{reviewer.user.first_name}} {{reviewer.user.last_name}}</option>
+                                 {% endfor %}
+                              </select>  
+                            </div>
+                            <div class="col-sm">
+                              <button type="submit" class="btn btn-primary">Confirm Reviewer</button>
+                            </div>
+                          </div>
+                          {% elif paper.has_review %}
+                          <center>
+                          <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewreview{{paper.id}}">
+                            View Review
+                          </button>
+                        </center>
+                          {% else %}
+                          <!-- Check the paper's status -->
+                          {% if paper.status == "under_review" %}
+                              <p>Under Scrutiny</p>
+                          {% endif %}
+                          {% endif %}
+                          </form>
+                          </div>
+                        
+                         </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                         </div>
+                       </div>
+                     </div>
+                  </div>
+                  <div class="modal fade" id="viewreview{{paper.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Review for {{paper.papertitle}}</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                        {% for review in reviews %}
+                        {% if review.paper.id == paper.id%}
+                        <tr>
+                          <th> Reviewer </th>
+                          <th>{{review.reviewer.user.first_name}} {{review.reviewer.user.last_name}}</th>
+                        </tr>
+                        <tr>
+                          <th> Relevance </th>
+                          <th>{{review.relevance}}</th>
+                        </tr>
+                        <tr>
+                          <th> Writing Style </th>
+                          <th>{{review.writingStyle}}</th>
+                        </tr>
+                        <tr>
+                          <th>Result Analysis</th>
+                          <th> {{review.reviewerConfidence}}</th>
+                        </tr>
+                        <tr>
+                          <th>Comments</th>
+                          <th> {{review.comments}}</th>
+                        </tr>
+                        <tr>
+                          <th>Suggested Mode of Preparation</th>
+                          <th> {{review.modeOfPreparation}}</th>
+                        </tr>
+                        <tr>
+                          <th>Overall Evaluation</th>
+                          <th> {{review.score}}</th>
+                        </tr>
+                        <tr>
+                          <th>Confidential remarks for program chair</th>
+                          <th> {{review.confidentialremarks}}</th>
+                        </tr>
+                        <tr>
+                         {% if review.result %}
+                         <center>
+                          <h3 style="color:blue;">{{review.result}}</h3>
+                         </center>
+                          {% else %}
+                         <center>
+                          <a class="btn btn-success " href="accept_paper/{{review.id}}" role="button">
+                            Accept
+                          </a>
+                         
+                          <a class="btn btn-danger " href="reject_paper/{{review.id}}" role="button">
+                            Reject
+                          </a>
+                         </center>
+                         {% endif %}
+                        </tr>
+                        {% endif %}
+                        
+                        {% endfor %}
+                            
+                         </table>
+                         </div>
+                        
+                        <div class="modal-footer">
+                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                 </div>
                   </th>
-                </tr>
+                  
+                    
+                  
+                {% endfor %}
+                {% endif %}
               </table>
             </div> 
-            <div id="Peoples" class="tabcontent" >
+            <div id="Peoples" class="tabcontent" style="width:390px;" >
                 <div class="aboutconference" style="background-color:white;">
                     <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;display:block;margin-right:1opx;">&nbsp;Authors</a>
                     <div class="text" style="margin:15px;">
-                      <center>
-                        <h6 style="text-align:left; padding-bottom:30px;padding-left:10px;padding-right:10px;">
-                          (Authors)
-                        </h6>
-                      </center>
+                        {% for author in authors %}
+                          <tr>
+                            <td>{{ author.user.first_name }} {{ author.user.last_name }}</td>
+                            <button class="btn btn-primary" type="button"  data-bs-toggle="modal" data-bs-target="#viewauthordata">
+                              Info
+                            </button>
+                            <!-- Add more columns for other reviewer details if needed -->
+                            </tr>
+                            {% empty %}
+                              <tr>
+                                  <td colspan="2">No reviewers found for this conference.</td>
+                              </tr>
+                            {% endfor %}
+                     
                     </div>
                  </div>
                  <div class="about-institute"  style="background-color:white;">
@@ -108,6 +296,7 @@
                       <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
                         (Reviewers)
                       </h6>
+                      
                     <center>
                   </div>    
                  </div> 
@@ -115,6 +304,75 @@
         </div> 
      
     </div> 
+
+    <div class="modal fade" id="viewauthordata" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">About Author</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+           <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+            
+             <tr>
+               <th> Name </th>
+               <th>{{author.user.first_name}} {{author.user.last_name}}</th>
+               
+             </tr>
+             <tr>
+               <th>Email</th>
+               {{author.user.email}}
+             </tr>
+             <tr>
+               <td>Profession  </td>
+               <td>{{author.user.profession}}</td>
+               
+             </tr>
+             <tr>
+               Affiliated to {{author.user.afiliation}} as {{author.user.role}}.
+               
+             </tr>
+             
+           </table>
+           
+           <div class="row">
+             <form method="POST" action="paper={{paper.id}}/">
+               {% csrf_token %}
+            {% if paper.status == 'submitted' %}
+            <div class="row">
+             <div class="col-sm">
+               <select class="form-select" style="margin-top:5px" aria-label="Default select example" name="reviewer" required>
+                 <option selected>Assign Reviewer</option>
+                  {% for reviewer in reviewers %}
+                    <option  value="{{reviewer.user_id}}"> {{reviewer.user_id}}</option>
+                  {% endfor %}
+               </select>  
+             </div>
+             <div class="col-sm">
+               <button type="submit" class="btn btn-primary">Confirm Reviewer</button>
+             </div>
+           </div>
+           
+           </form>
+           </div>
+         
+          </div>
+          <div class="modal-footer">
+            
+             {% elif paper.status == 'under_review'%}
+                 Under Scrutinity
+             {% else %}
+             <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+               View Review
+             </button>
+             {% endif %}
+             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+   </div>
+
     {% comment %} Modal to edit conference {% endcomment %}
     <div class="modal fade dark-modal" id="myModal1" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">

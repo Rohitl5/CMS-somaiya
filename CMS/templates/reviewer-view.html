@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}Reviewer - KJSIT Conference Management System{% endblock %}
 
+{% block signup_button %}
+<div class="signup-button">
+  <a class="btn btn-primary btn-lg shadow-lg" href="/logout/" style="margin-right:12px;" role="button">
+    Logout
+  </a>
+  
+</div>
+{% endblock %}
+
+
 {% block additional-css %}
 .title-column{
   width:500px;
@@ -23,8 +33,8 @@
 {% endblock additional-css %}
 {% block content %}
 <div class="row" id="conf-header" style="background: linear-gradient(to right, rgb(255, 65, 108), rgb(255, 75, 43));margin-top:100px;height:300px;">
-  <center><h1 style="color:white;margin-top:30px;">((Conference Name))</h1></center>
-  <center><h3 style="color:white;margin-top:30px;">Last Date of Submission : ((Date))</h3></center>
+  <center><h1 style="color:white;margin-top:30px;">{{conference.conferenceTitle}}</h1></center>
+
 </div>  
 
 <div class="main-body" style="display:flex;background-color:#f2f2f2;margin-left:auto;margin-right:auto;width:fit-content;margin-bottom:30px;">
@@ -47,35 +57,20 @@
 
         <div class="content-main" style="margin-left:10px;max-width:fit-content;flex:auto;margin-top:30px;background-color:white;">
             <div id="pending-reviews" class="tabcontent">
+              {% if not papers %}
+              <h3>No papers to be reviewed</h3>
+              {% else %}
+              {% for paper in papers %}
               <table style="margin-bottom:5px;">
                 <tr>
-                  <th class="title-column">&nbsp;&nbsp;(Title with link of paper)</th>
+                  <th class="title-column">&nbsp;&nbsp;{{paper.papertitle}}</th>
                   <th style="font-weight:normal;padding-right:30px;">
-                    <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal"  data-bs-target="#viewpaperdata{{paper.papertitle}}">
                       Add Review
                     </button>
-                  </th>
-                </tr>
-              </table>
-            </div> 
-            <div id="past-submissions" class="tabcontent">
-              <table style="margin-bottom:5px;">
-                <tr>
-                  <th class="title-column">&nbsp;&nbsp;(Title with link of paper)</th>
-                  <th style="font-weight:normal;padding-right:30px;">
-                    <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">
-                      &nbsp;&nbsp;View&nbsp;&nbsp;
-                    </button>
-                  </th>
-                </tr>
-              </table>
-            </div> 
-        </div> 
-     
-</div> 
 
-<!-- New Review Modal -->
-<div class="modal " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <!-- New Review Modal -->
+<div class="modal "  id="viewpaperdata{{paper.papertitle}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header" style="background-color:#a70000;color:#fff;">
@@ -83,70 +78,81 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        &nbsp;&nbsp;Title: (Title)<br>
-        &nbsp;&nbsp;Author: (Author)
+        &nbsp;&nbsp;Title: {{paper.papertitle}}<br>
+        &nbsp;&nbsp;Author: {{paper.authors.user.first_name}} {{paper.authors.user.last_name}}
+        <form method="POST" action="submitreview/paper={{paper.id}}/">
+          {% csrf_token %}
         <div  style=" display: flex;flex-direction: row;margin-top:10px;"class="form-row">
                
           <div style="width:50%" class="form-floating mx-1 mb-3 ">
-            <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="relevance">
               <option selected>.....</option>
               <option value="1">One</option>
               <option value="2">Two</option>
               <option value="3">Three</option>
+              <option value="3">Four</option>
+              <option value="3">Five</option>
             </select>
             <label for="floatingSelect">Relevance</label>
           </div>
        
         <div style="width:50%" class="form-floating mx-1 mb-3 ">
-          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-            <option selected>....</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+          <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="writingstyle">
+            <option selected>.....</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+              <option value="3">Four</option>
+              <option value="3">Five</option>
           </select>
           <label for="floatingSelect">Writing Style</label>
         </div>
         <div style="width:50%" class="form-floating mx-1 mb-3 ">
-          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-            <option selected>....</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+          <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="resultanalysis">
+            <option selected>.....</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+              <option value="3">Four</option>
+              <option value="3">Five</option>
           </select>
           <label for="floatingSelect">Result Analysis</label>
         </div>
         </div>
 
         <div class="form-floating  mb-3">
-          <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+          <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" name="comments" style="height: 100px"></textarea>
           <label for="floatingTextarea2">Comments</label>
         </div>
         
         <div  style=" display: flex;flex-direction: row;"class="form-row">
                
           <div style="width:50%" class="form-floating mx-1 mb-3 ">
-            <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="modeofpreparation">
               <option selected>.....</option>
               <option value="1">One</option>
               <option value="2">Two</option>
               <option value="3">Three</option>
+              <option value="3">Four</option>
+              <option value="3">Five</option>
             </select>
             <label for="floatingSelect">Suggested Mode of Preparation</label>
           </div>
        
         <div style="width:50%" class="form-floating mx-1 mb-3 ">
-          <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-            <option selected>....</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+          <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="overallevaluation">
+            <option selected>.....</option>
+              <option value="1">Reject</option>
+              <option value="2">Not sure</option>
+              <option value="3">Accept</option>
+              
           </select>
           <label for="floatingSelect">Overall Evaluation</label>
         </div>
         </div>
 
         <div class="form-floating  mb-3">
-          <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+          <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" name="remarks"></textarea>
           <label for="floatingTextarea2">Confidential remarks for program chair</label>
         </div>
         
@@ -154,14 +160,34 @@
       </div>  
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
+                  </th>
+                </tr>
+              </table>
+              {% endfor %}
+              {% endif %}
+              
+            </div> 
+            <div id="past-submissions" class="tabcontent">
+              {% if not reviews %}
+              <h3>No reviews yet.</h3>
+              {% else %}
+              {% for review in reviews %}
+              <table style="margin-bottom:5px;">
+                <tr>
+                  <th class="title-column">&nbsp;&nbsp;{{review.paper.papertitle}}</th>
+                  <th style="font-weight:normal;padding-right:30px;">
+                    <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pastreview{{review.id}}">
+                      &nbsp;&nbsp;View&nbsp;&nbsp;
+                    </button>
 
-<!-- Submitted Reviews Modal-->
-<div class="modal " id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <!-- Submitted Reviews Modal-->
+<div class="modal " id="pastreview{{review.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header" style="background-color:#a70000;color:#fff;">
@@ -169,15 +195,15 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        &nbsp;&nbsp;Title: (Title)<br>
-        &nbsp;&nbsp;Author: (Author)<br>
-        &nbsp;&nbsp;Relevance: 1
-        &nbsp;&nbsp;Writing Style: 2
-        &nbsp;&nbsp;Result Analysis: 3<br>
-        &nbsp;&nbsp;Comments: ()<br>
-        &nbsp;&nbsp;Suggested Mode of Preparation: (Points)<br>
-        &nbsp;&nbsp;Overall Evaluation: (Points)<br>
-        &nbsp;&nbsp;Confidential remarks for program chair: (Points)<br>
+        &nbsp;&nbsp;Title: {{review.paper.papertitle}}<br>
+        &nbsp;&nbsp;Author: {{review.paper.authors.user.first_name}} {{review.paper.authors.user.last_name}}<br>
+        &nbsp;&nbsp;Relevance: {{review.relevance}}
+        &nbsp;&nbsp;Writing Style: {{review.writingStyle}}
+        &nbsp;&nbsp;Result Analysis: {{review.reviewerConfidence}}<br>
+        &nbsp;&nbsp;Comments: {{review.comments}}<br>
+        &nbsp;&nbsp;Suggested Mode of Preparation: {{review.modeOfPreparation}}<br>
+        &nbsp;&nbsp;Overall Evaluation: {{review.score}}<br>
+        &nbsp;&nbsp;Confidential remarks for program chair: {{review.confidentialremarks}}<br>
         
       </div>
       <div class="modal-footer">
@@ -187,6 +213,19 @@
     </div>
   </div>
 </div>
+                  </th>
+                </tr>
+              </table>
+              {% endfor %}
+              {% endif %}
+            </div> 
+        </div> 
+     
+</div> 
+
+
+
+
 
 {% endblock content %}
 {% block additional-script %}

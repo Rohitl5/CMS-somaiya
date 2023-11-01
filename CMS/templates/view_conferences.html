@@ -177,8 +177,19 @@
          </div>
         </div>    
         <div id="callForpapers" class="tabcontent" style="width:600px;">
-          {% for track in tracks  %}
-          <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;">&nbsp;{{track.title}}</a>
+          {% if not tracks %}
+          <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;">&nbsp;"Tracks"</a>
+          <div class="text" style="margin:15px;background-color:white;"> 
+            <center>
+              <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                No track added yet
+              </h6>
+            <center>
+          </div>
+          
+          {% else %}
+           {% for track in tracks  %}
+           <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;">&nbsp;{{track.title}}</a>
             <div class="text" style="margin:15px;background-color:white;"> 
               <center>
                 <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
@@ -186,7 +197,8 @@
                 </h6>
               <center>
             </div>
-          {% endfor %}
+           {% endfor %}
+           {% endif %}
             
         </div> 
         <div id="dates" class="tabcontent">

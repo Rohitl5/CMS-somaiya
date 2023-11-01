@@ -335,14 +335,14 @@
         <center><label style="margin-bottom: 5px;">Add images containing details of various committees</label></center>
         <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
           <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="file" name="committeeImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple required>
+            <input type="file" name="committeeImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
             <label for="floatingInput17" style="margin-left: 10px;">Committee details</label>                            
           </div>
         </div>
         <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Images</label></strong>
         <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
           <div class="form-floating" style=" text-align:center; margin-left:20px;">
-            <input type="file" name="conferenceImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple required>
+            <input type="file" name="conferenceImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
             <label for="floatingInput17" style="margin-left: 10px;">Images related to Conference and Institute</label>                            
           </div>
         </div>
@@ -356,25 +356,33 @@
   </div>
 </div>
 
+{% if not enrolled %}
+<center>
+<h3>Not enrolled in any conference</h3>
+</center>
+{% else %}
 <div class="ag-conference_box">
- <div class="ag-conference_item">
-   <a href="#" class="ag-conference-item_link">
-     <div class="ag-conference-item_bg"></div>
- 
-     <div class="ag-conference-item_title">
-       ICAST&#160;2022
-     </div>
- 
-     <div class="ag-conference-item_role-box">
-       Role:
-       <span class="ag-conference-item_role">
-         (Role)
-       </span>
-     </div>
-   </a>
- </div>
-</div>
+{% for conference in enrolled %}
+<div class="ag-conference_item">
+  <a href="/conference/{{conference.id}}/programChair/" class="ag-conference-item_link">
+    <div class="ag-conference-item_bg"></div>
 
+    <div class="ag-conference-item_title">
+      {{conference.conferenceTitle}}
+    </div>
+
+    <div class="ag-conference-item_role-box">
+      Role:
+      <span class="ag-conference-item_role">
+        Program Chair
+      </span>
+    </div>
+  </a>
+</div>
+{% endfor %}
+
+</div>
+{%endif%}
 {% endblock %}
 
 {% block additional-script %}

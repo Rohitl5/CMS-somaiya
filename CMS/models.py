@@ -41,7 +41,6 @@ class UserManager(BaseUserManager):
         
         return self._create_user(email, phone, password, **extra_fields)
     
-
 # Create your models here.
 class User(AbstractUser):
     """User model."""
@@ -78,18 +77,14 @@ class Conference(models.Model):
     conference_date=models.DateField()
     conference_venue=models.CharField(max_length=225,null="True")
 
-
     def __str__(self):
         return self.conferenceTitle
     
     def submissions_open(self):
-        return timezone.now().date() <= self.end_date
+        return timezone.now().date() <= self.submission_deadline
     
     def is_chair(self, user):
-        if user==self.programChair:
-           return 1
-        else :
-           return 0
+        return user==self.programChair
 
 class committeeImages(models.Model):
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
@@ -116,11 +111,17 @@ class Track(models.Model):
     def __str__(self):
         return self.conference
 
-
 class Author(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     conferences = models.ManyToManyField(Conference)
     
+    def __str__(self):
+        return self.user.email
+
+class Reviewer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    conference = models.ForeignKey(Conference, on_delete=models.CASCADE,null="True")
+
     def __str__(self):
         return self.user.email
 
@@ -132,32 +133,30 @@ class Paper(models.Model):
         ('rejected', 'Rejected'),
     ]
 
-    title = models.CharField(max_length=255)
+    papertitle = models.CharField(max_length=255)
     abstract = models.TextField()
     file = models.FileField(upload_to='papers/')
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
-    authors = models.ManyToManyField(Author, related_name='papers')
+    authors = models.ForeignKey(Author, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted')
     keywords=models.TextField()
     submissionDate=models.DateField()
+    otherauthors=models.CharField(max_length=125,null=True)
+    reviewer=models.ForeignKey(Reviewer,on_delete=models.SET_NULL,null=True)
     
 
     def __str__(self):
-        return self.title
+        return self.papertitle
     
     def is_author(self, user):
         return self.authors.filter(user=user).exists()
     
     def is_reviewer(self, user):
-        return self.reviewer_set.filter(user=user).exists()
-
-class Reviewer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    papers = models.ManyToManyField(Paper)
-
-    def __str__(self):
-        return self.user.email
+        return self.reviewer.filter(user=user).exists()
+    
+    def has_review(self):
+        return Review.objects.filter(paper=self).exists()
 
 class Review(models.Model):
     RESULT_CHOICES = [
@@ -169,15 +168,15 @@ class Review(models.Model):
     relevance = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     writingStyle = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     reviewerConfidence = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    originality = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    result=models.CharField(choices=RESULT_CHOICES,max_length=20)
-    modeOfPreapartion=models.TextField()
-    score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    result=models.CharField(choices=RESULT_CHOICES,max_length=20,null=True)
+    modeOfPreparation= models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(3)])
     comments = models.TextField()
+    confidentialremarks=models.TextField(null=True)
 
     class Meta:
         unique_together = ['paper', 'reviewer']
 
     def __str__(self):
-        return f"Review for {self.paper.title} by {self.reviewer.user.email}"
+        return f"Review for {self.paper.papertitle} by {self.reviewer.user.email}"
     
