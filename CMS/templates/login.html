@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In - KJSIT Conference Management System{% endblock %}
+
+{% block additional-css %}
+@media only screen and (max-width: 770px) {
+    .signup-side-part{
+        display:none;
+    }
+  }
+
+@media only screen and (max-width: 430px) {
+    h1 {
+        width:fit-content;
+    }
+    #con2 {
+     min-width:none;
+     width:fit-content;
+    }
+    .row {
+        width:fit-content;
+    }
+    input {
+        width:fit-content;
+    }
+    main {
+        width:fit-content;
+    }
+  }
+{% endblock additional-css %}
+
+{% block content %}
+    <div class="main-container" style="display:flex;width:fit-content;height:600px;margin-left:auto;margin-right:auto;">
+        <div class="signup-form-container" >
+            <div class="container" id="con1" style=" 
+            border-left-style: solid;
+            border-left-color: #ff0000;
+            border-left-width: 5px ;
+            padding: 10px;
+            width: fit-content;
+            top:50%;
+            height: 500px ;
+            transform: translate(0%, 10%);
+            margin-left:0px;
+            margin-right:0px;
+            ">
+                <h1 style="margin-left:10px;">Welcome Back</h1>
+                <form method="POST" action='/login/'>
+                    {% csrf_token %}
+                    <div class="container" id="con2" style="color: #000;
+                     max-width: fit-content;
+                     border-radius: 15px;
+                     ">
+                        
+                        <div class="row mb-3">
+                            <div class="col" >
+                                <div class="form-floating">
+                                    <input type="email" id ="floatinglabel" name="email" class="form-control" style="width: 100%" placeholder="name@example.com" required>
+                                    <label for="floatinglabel">Email address</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3 ">
+                            <div class="col">
+                                <div class="pfield">
+                                    <div class="form-floating">
+                                    <input type="password"  class="form-control" id="floatingPassword" placeholder="Password" name="pass"  required>
+                                    <label for="floatingPassword">Password</label>
+                                </div>
+                            </div>
+                        </div>
+                            
+                        </div> 
+                    </div>   
+                    <button type="submit" class="btn btn-primary btn-lg shadow-lg" style="float:right;margin-right:12px;">Login</a>
+                    </div>
+                    <a href="/signup/" style="float:right;margin-right:12px;" class="link-primary">Don't have an account?</a> 
+                </form>
+            </div>
+        <div class="signup-side-part" style=" width:auto;min-height:500px;">
+            <img src="https://i0.wp.com/eos.org/wp-content/uploads/2022/09/conference.png?fit=1200%2C675&ssl=1" alt="conf" style="width: 100%;
+            height: 80%;
+            transform: translate(0%, 12%);
+            padding:10px;">
+        </div>
+        </div>    
+        
+        {% endblock %}
+        {% block additional-script %}
+        <script>
+            function toggleOther() {
+                var y = document.getElementById("psel");
+                var z = document.getElementById("oth");
+                var w = document.getElementById("othlab");
+                
+                if (y.value === "Other") {
+                    z.style.display = "block";
+                    z.required = true
+                    w.style.display = "block";
+                } else {
+                    z.style.display = "none";
+                    z.required = false
+                    w.style.display = "none";
+                }
+            }
+        </script>
+        {% endblock additional-script %}

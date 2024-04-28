@@ -1,0 +1,795 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Program Chair View - KJSIT Conference Management System{% endblock title %}
+
+{% block signup_button %}
+<div class="signup-button">
+  <a class="btn btn-primary btn-lg shadow-lg" href="/logout/" style="margin-right:12px;" role="button">
+    Logout
+  </a>
+  
+</div>
+{% endblock %}
+
+{% block additional-css %}
+
+th, td {
+  padding: 5px;
+}
+@media only screen and (max-width: 770px) {
+    .col{
+      min-width:-webkit-fill-available;
+      margin-bottom:10px;
+    }
+}
+.title-column{
+    width:500px;
+    font-weight:normal;
+   }
+  
+   @media only screen and (max-width: 430px){
+    .main-body{
+      display:flex;
+      background-color:#f2f2f2;
+      justify-content:center;
+      width:fit-content;
+      margin-left:auto;
+      margin-right:auto;
+      flex-wrap:wrap;
+      flex-direction:column;
+    }
+  
+   
+  }
+{% endblock additional-css %}
+{% block content %}
+
+    <div class="row" id="conf-header" style="background: linear-gradient(to right, rgb(255, 65, 108), rgb(255, 75, 43));margin-top:100px;height:350px;">
+       <center><h1 style="color:white;margin-top:30px;">{{conference.conferenceTitle}}</h1></center>
+       <center><div class="options" role="group" style="height:50px;width:100px;border-radius:10px;display:flex;justify-content:center;">
+        <div class="px-3">
+          <button type="button" style="width:100px;" class="btn btn-light shadow-lg" data-bs-toggle="modal" data-bs-target="#myModal2">
+           Add<br>Track
+          </button>
+
+          {% comment %} Modal to add Track {% endcomment %}
+    <div class="modal fade dark-modal" id="myModal2" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color:#a70000;color:#fff;">
+            <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Track Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
+          </div>
+          <form method="POST" action="/conference/{{conference.id}}/programChair/addTrack/" >
+          {% csrf_token %}
+            <div class="modal-body" style="overflow-x:hidden;">
+              <center>
+                <div class="form-floating" style=" text-align:center; margin-left:20px;margin-bottom:10px;">
+                    <input type="text" name="title" class="form-control" id="floatingInput15" placeholder="Firstname" style="width: 95%" required>
+                    <label for="floatingInput15">Track Name</label>                            
+                </div>
+                <div class="form-floating" style=" text-align:center; margin-left:20px;margin-bottom:10px;">
+                    <textarea type="text" name="subDomains" class="form-control" id="floatingInput15" placeholder="Firstname" style="width: 95%;min-height:100px;" required></textarea>
+                    <label for="floatingInput15">Add Sub-domains in proper order</label>                            
+                </div>
+              </center>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add Track</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  </div>
+
+        </div>
+        <div class="px-3">
+          <button type="button" style="width:100px;" class="btn btn-light shadow-lg" data-bs-toggle="modal" data-bs-target="#myModal3">
+           Invite Reviewer
+          </button>
+
+           {% comment %} Modal to invite reviewer {% endcomment %}
+    <div class="modal fade dark-modal" id="myModal3" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color:#a70000;color:#fff;">
+            <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Invite Reviewer</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
+          </div>
+          <form method="POST" action="/conference/{{conference.id}}/programChair/inviteReviewer/" >
+          {% csrf_token %}
+            <div class="modal-body" style="overflow-x:hidden;">
+              <center>
+                <div class="form-floating" style=" text-align:center; margin-left:20px;margin-bottom:10px;">
+                    <input type="text" name="reviewer_email" class="form-control" id="floatingInput15" placeholder="Firstname" style="width: 95%" required>
+                    <label for="floatingInput15">Enter email-id of the reviewer to be added</label>                            
+                </div>
+                An invitation mail will be sent to the specified mail-id
+              </center>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  </div>
+        </div>
+        <div class="px-3">
+          <button type="button" style="width:100px;" class="btn btn-light shadow-lg" data-bs-toggle="modal" data-bs-target="#myModal1" >
+           Edit Conference
+          </button>
+
+          {% comment %} Modal to edit conference {% endcomment %}
+    <div class="modal fade dark-modal" id="myModal1" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color:#a70000;color:#fff;">
+            <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Edit Conference Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
+          </div>
+          <div class="modal-body" style="overflow-x:hidden;">
+            <form enctype="multipart/form-data"  method='POST' action="/conference/{{conference.id}}/programChair/editConference/" >
+            {% csrf_token %}
+            <div class="row" style="margin-top:10px;">
+              <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                <input type="text" name="title" class="form-control" id="floatingInput1" placeholder="Firstname" style="width: 95%" required value="{{conference.conferenceTitle}}" disabled>
+                <label for="floatingInput1" style="margin-left: 10px;">Title</label>                            
+              </div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                <input type="text" name="institute" class="form-control" id="floatingInput2" placeholder="Firstname" style="width: 95%" required value="{{conference.organizing_institute}}" disabled>
+                <label for="floatingInput2" style="margin-left: 10px;">Organizing Institute</label>                            
+              </div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <div class="col">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <textarea type="text" name="aboutInstitute" class="form-control" id="floatingInput3" placeholder="Firstname" style="min-height: 130px; width: 95%;" >{{conference.institute_details}}</textarea>
+                  <label for="floatingInput3">About Institute</label>                            
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <textarea type="text" name="aboutConference" class="form-control" id="floatingInput4" placeholder="Firstname" style="min-height: 130px; width: 95%;">{{conference.about_conference}}</textarea>
+                  <label for="floatingInput4">About Conference</label>                            
+                </div>
+              </div>
+            </div>
+            <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Important Dates</label></strong>
+           
+            <div class="row" style="margin-top:10px;">
+              <div class="col">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <input type="date" name="submissionDeadline" class="form-control" id="floatingInput5" placeholder="Firstname" style="width: fit-content; " value="{{conference.submission_deadline|date:"Y-m-d"}}" required>
+                  <label for="floatingInput5">Submission Deadline</label>                            
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <input type="date" name="notificationOfAcceptance" class="form-control" id="floatingInput6" placeholder="Firstname" style="width: fit-content;"  value="{{conference.notification_of_acceptance|date:"Y-m-d"}}" required>
+                  <label for="floatingInput6">Notification of Acceptance</label>                            
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                  <input type="date" name="registrationDeadline" class="form-control" id="floatingInput7" placeholder="Firstname" style="width: fit-content;" value="{{conference.registration_deadline|date:"Y-m-d"}}" required>
+                  <label for="floatingInput7">Registration Deadline</label>                            
+                </div>
+              </div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <div class="col-auto">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                <input type="date" name="cameraReadyPapers" class="form-control" id="floatingInput8" placeholder="Firstname" style="width: fit-content;" value="{{conference.camera_ready_papers|date:"Y-m-d"}}" required>
+                <label for="floatingInput8">Camera Ready Papers</label>                            
+              </div>
+              </div>
+              <div class="col-auto">
+                <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                <input type="date" name="conferenceDate" class="form-control" id="floatingInput9" placeholder="Firstname" style="width: fit-content;" required value="{{conference.conference_date|date:"Y-m-d"}}">
+                <label for="floatingInput9">Conference Date</label>                            
+              </div>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 20px;">
+              <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                <input type="text" name="venue" class="form-control" id="floatingInput10" placeholder="Firstname" style="width: 95%;" value="{{conference.conference_venue}}">
+                <label for="floatingInput10" style="margin-left: 10px;">Conference Venue</label>                            
+              </div>
+            </div>
+            
+            <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Committees</label></strong>
+            <center><label style="margin-bottom: 5px;">Add images containing details of various committees</label></center>
+            <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
+              <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                <input type="file" name="committeeImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
+                <label for="floatingInput17" style="margin-left: 10px;">Committee details</label>                            
+              </div>
+            </div>
+            <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Images</label></strong>
+            <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
+              <div class="form-floating" style=" text-align:center; margin-left:20px;">
+                <input type="file" name="conferenceImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
+                <label for="floatingInput17" style="margin-left: 10px;">Images related to Conference and Institute</label>                            
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Edit</button>
+          </div>
+        </form>
+        </div>
+      </div>
+  </div>
+
+        </div>
+       </div>
+    </div> 
+    <div class="main-body" style="display:flex;background-color:#f2f2f2;margin-left:auto;margin-right:auto;width:fit-content;margin-bottom:30px;align-items:center;">
+      
+      <div class="tab" style="margin-top:30px;background-color:white;max-width:fit-content;flex:auto;height: max-content;">
+            <ul class="nav flex-column">
+            <li class="nav-item">
+              <button class="tablinks" onclick="openInfo(event,'papers') " id="defaultOpen" style="width:250px;height:60px;border:none;background-color:white;text-align: left;font-size: 20px;border-left: 5px solid red; border-top: 5px solid rgba(231,232,233,0.5);font-weight:bold;color:#494F55;">
+                <i class="fas fa-pager"></i>  
+                &nbsp;Submitted Papers
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="tablinks" onclick="openInfo(event, 'Peoples')" style="width:250px;height:60px;border:none;background-color:white;text-align: left;font-size: 20px;border-left: 5px solid red; border-top: 5px solid rgba(231,232,233,0.5);font-weight:bold;color:#494F55;">
+                <i class="fas fa-people-group"></i>  
+                &nbsp;Peoples
+              </button>
+            </li>
+            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="height:60px;margin-top:10px;">
+              Export data
+            </button>
+            <ul class="dropdown-menu" >
+              <li><a class="dropdown-item" href="export_data/1">All submitted papers</a></li>
+              <li><a class="dropdown-item" href="export_data/2">Reviewed Papers</a></li>
+              <li><a class="dropdown-item" href="export_data/3">All peoples</a></li>
+              <li><a class="dropdown-item" href="export_data/4">Only Reviewers</a></li>
+              <li><a class="dropdown-item" href="export_data/5">Only Authors</a></li>
+              <li><a class="dropdown-item" href="export_data/6">Registered Authors</a></li>
+            </ul>
+            </ul>
+          </div>
+          
+
+        <div class="content-main" style="margin-left:10px;width:-webkit-fill-available;flex:auto;margin-top:30px;background-color:white;">
+            <div id="papers" class="tabcontent" style="max-width:390px;">
+              {% if not uploadedpapers %}
+                 
+                 <div class="text" style="margin:15px;background-color:white;"> 
+                   <center>
+                     <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                       No papers uploaded yet.
+                     </h6>
+                   <center>
+                 </div>
+              {% else %}
+              <table style="margin-bottom:5px;border-collapse:separate; 
+              border-spacing: 0 1em;">
+
+                {% for paper in uploadedpapers %}
+                <tr>
+                  <th class="title-column">&nbsp;&nbsp;{{paper.papertitle}}</th>
+                  <th>
+                  <button class="btn btn-primary" style="border-radius:50%" type="button"  data-bs-toggle="modal" data-bs-target="#viewpaperdata{{paper.id}}">
+                    <i class="fas fa-info" ></i>
+                  </button>
+                  
+                  <div class="modal fade" id="viewpaperdata{{paper.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                     <div class="modal-dialog modal-dialog-centered">
+                       <div class="modal-content">
+                         <div class="modal-header">
+                           <h1 class="modal-title fs-5" id="exampleModalLabel">Paper Information</h1>
+                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                         </div>
+                         <div class="modal-body">
+                          <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                           
+                            <tr>
+                              <th> Title </th>
+                              <th>{{paper.papertitle}}</th>
+                              
+                            </tr>
+                            <tr>
+                              <th>Author</th>
+                              <td>
+                               {{paper.authors.user.first_name}} {{paper.authors.user.last_name}}
+                                {% if paper.otherauthors %}
+                                  , {{ paper.otherauthors }}
+                                {% endif %}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Abstract </td>
+                              <td>{{paper.abstract}}</td>
+                              
+                            </tr>
+                            <tr>
+                              <td>Track </td>
+                              <td>{{paper.track.title}}</td>
+                              
+                            </tr>
+                            <tr>
+                              <td>Keywords </td>
+                              <td>{{paper.keywords}}</td>
+                              
+                            </tr>
+                            <tr>
+                              <td>Submission Date </td>
+                              <td>{{paper.submissionDate}}</td>
+                              
+                            </tr>
+                          </table>
+                          
+                          <div class="row">
+                           <form method="POST" action="paper={{paper.id}}/">
+                           {% csrf_token %}
+                           {% if paper.status == "Desktop Rejected" %}
+                              <p style="color:red;">Desktop Rejected</p>
+                          {% endif %}
+                           {% if paper.status == 'submitted' %}
+                           <div class="row" style="margin-top:15px;">
+                            <center>
+                            <div class="col" style="margin-bottom:10px;"id="select-reviewers">
+                            <div class="dropdown"> 
+                             
+                              <button class="btn btn-outline-primary dropdown-toggle"
+                                      type="button" 
+                                      id="multiSelectDropdown"
+                                      data-bs-toggle="dropdown" 
+                                      aria-expanded="false"
+                                      > 
+                                  Select 
+                              </button> 
+                            
+                              <ul class="dropdown-menu" 
+                                  aria-labelledby="multiSelectDropdown"> 
+                                  {% for reviewer in reviewers %}
+                                  <li> 
+                                    <label> 
+                                      <input type="checkbox" 
+                                             value="{{reviewer.user.id}}"
+                                             name="reviewers"
+                                             placeholder="{{reviewer.user.first_name}}"> 
+                                          {{reviewer.user.first_name}} {{reviewer.user.last_name}}
+                                      </label> 
+                                  </li> 
+                                  {% endfor%}
+                                </ul>     
+                            </div> 
+                          </div>
+                            <div class="col">
+                              <button type="submit" class="btn btn-primary">Confirm Reviewer</button>
+                            </div>
+                            <div class="col" style="margin-top:20px;">
+                              <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Reject Paper
+                              </button>
+                              <ul class="dropdown-menu" >
+                                <li><a class="dropdown-item" href="/conference/{{conference.id}}/programChair/desktop_reject/{{paper.id}}">Desktop Reject</a></li>
+                                
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#plagiarismModal{{paper.id}}">Reject due to plagarism</a></li>
+                              </ul>
+                              
+                            </div>
+                            
+                          </center>
+
+                        </div>
+                          {% elif paper.has_review and paper.status != "Desktop Rejected"%}
+                          <center>
+                          <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewreview{{paper.id}}">
+                            View Review
+                          </button>
+                        </center>
+                          {% else %}
+                          <!-- Check the paper's status -->
+                          {% if paper.status == "under_review" %}
+                              <p>Under Scrutiny</p>
+                          {% endif %}
+                          {% endif %}
+                          </form>
+                          </div>
+                        
+                         </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                         </div>
+                       </div>
+                     </div>
+                  </div>
+                  <div class="modal fade" id="viewreview{{paper.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Review for {{paper.papertitle}}</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                        {% for review in reviews %}
+                        {% if review.paper.id == paper.id%}
+                        
+                        <tr>
+                          <th> Reviewer </th>
+                          <th>{{review.reviewer.user.first_name}} {{review.reviewer.user.last_name}}</th>
+                        </tr>
+                        <tr>
+                          <th> Relevance </th>
+                          <th>{{review.relevance}}</th>
+                        </tr>
+                        <tr>
+                          <th> Writing Style </th>
+                          <th>{{review.writingStyle}}</th>
+                        </tr>
+                        <tr>
+                          <th>Result Analysis</th>
+                          <th> {{review.reviewerConfidence}}</th>
+                        </tr>
+                        <tr>
+                          <th>Comments</th>
+                          <th> {{review.comments}}</th>
+                        </tr>
+                        <tr>
+                          <th>Suggested Mode of Preparation</th>
+                          <th> {{review.modeOfPreparation}}</th>
+                        </tr>
+                        <tr>
+                          <th>Overall Evaluation</th>
+                          <th> {{review.score}}</th>
+                        </tr>
+                        <tr>
+                          <th>Confidential remarks for program chair</th>
+                          <th> {{review.confidentialremarks}}</th>
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                              <hr style="border-top: 3px solid #ccc; margin: 10px 0;">
+                          </td>
+                      </tr>
+                        
+                        {% endif %}
+                        
+                        {% endfor %}
+                        {% if paper.status == "Rejected due to Plagarism" %}
+                        <!-- Paper does not have reviews -->
+                        <p>This paper was rejected because it had certain plagarism.</p>
+                        {% else %}
+                        {% if paper.status == "accepted" or paper.status == "rejected"  %}
+                        <center>
+                         <h3 style="color:blue;">{{paper.status}}</h3>
+                        </center>
+                         {% else %}
+                        <center>
+                         <a class="btn btn-success " href="accept_paper/{{paper.id}}" role="button">
+                           Accept
+                         </a>
+                        
+                         <a class="btn btn-danger " href="reject_paper/{{paper.id}}" role="button">
+                           Reject
+                         </a>
+                        </center>
+                        {% endif %}
+                        
+                        
+                        {% endif %}
+                         </table>
+                         </div>
+                        
+                        <div class="modal-footer">
+                          
+                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                 </div>
+                  </th>
+                    <!-- Plagiarism Modal -->
+            <div class="modal fade" id="plagiarismModal{{paper.id}}" tabindex="-1" aria-labelledby="plagiarismModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="plagiarismModalLabel">Reject due to Plagiarism</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <!-- Plagiarism Report Form -->
+                          <form method="post" action="/conference/{{conference.id}}/programChair/reject_due_to_plagarism/{{paper.id}}" enctype="multipart/form-data">
+                              {% csrf_token %}
+                              <div class="mb-3">
+                                  <label for="plagiarismReport" class="form-label">Upload Plagiarism Report</label>
+                                  <input type="file" class="form-control" id="plagiarismReport" name="plagiarism_report" required>
+                              </div>
+                              <button type="submit" class="btn btn-danger">Reject</button>
+                          </form>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            </div> 
+                    
+                  
+                {% endfor %}
+                {% endif %}
+              </table>
+            </div>  
+            <div id="Peoples" class="tabcontent" style="width:390px;" >
+                <div class="aboutconference" style="background-color:white;">
+                    <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;display:block;margin-right:1opx;">&nbsp;Authors</a>
+                    <div class="text" style="margin:15px;">
+                        {% for author in authors %}
+                          <tr>
+                            <td>{{ author.user.first_name }} {{ author.user.last_name }}</td>
+                            <button class="btn btn-primary" type="button"  data-bs-toggle="modal" data-bs-target="#viewauthordata">
+                              Info
+                            </button>
+                            <!-- Add more columns for other reviewer details if needed -->
+                            </tr>
+                            {% empty %}
+                              <tr>
+                                  <td colspan="2">No Authors found for this conference.</td>
+                              </tr>
+                            {% endfor %}
+                     
+                    </div>
+                 </div>
+                 <div class="about-institute"  style="background-color:white;">
+                  <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;margin-right:10px;">&nbsp;Reviewers</a>
+                  <div class="text" style="margin:15px;"> 
+                    <center>
+                      <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                        (Reviewers)
+                      </h6>
+                      
+                    <center>
+                  </div>    
+                 </div> 
+            </div> 
+        </div> 
+     
+    </div> 
+
+    <div class="modal fade" id="viewauthordata" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">About Author</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+           <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+            
+             <tr>
+               <th> Name </th>
+               <th>{{author.user.first_name}} {{author.user.last_name}}</th>
+               
+             </tr>
+             <tr>
+               <th>Email</th>
+               {{author.user.email}}
+             </tr>
+             <tr>
+               <td>Profession  </td>
+               <td>{{author.user.profession}}</td>
+               
+             </tr>
+             <tr>
+               Affiliated to {{author.user.afiliation}} as {{author.user.role}}.
+               
+             </tr>
+             
+           </table>
+           
+           <div class="row">
+             <form method="POST" action="paper={{paper.id}}/">
+               {% csrf_token %}
+            {% if paper.status == 'submitted' %}
+            <div class="row">
+             <div class="col-sm">
+               <select class="form-select" style="margin-top:5px" aria-label="Default select example" name="reviewer" required>
+                 <option selected>Assign Reviewer</option>
+                  {% for reviewer in reviewers %}
+                    <option  value="{{reviewer.user_id}}"> {{reviewer.user_id}}</option>
+                  {% endfor %}
+               </select>  
+             </div>
+             <div class="col-sm">
+               <button type="submit" class="btn btn-primary">Confirm Reviewer</button>
+             </div>
+           </div>
+           
+           </form>
+           </div>
+         
+          </div>
+          <div class="modal-footer">
+            
+             {% elif paper.status == 'under_review'%}
+                 Under Scrutinity
+             {% else %}
+             <button type="button" style="margin-top:5px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+               View Review
+             </button>
+             {% endif %}
+             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+   </div>
+
+{% endblock content%}
+
+{% block additional-script %}
+<script>
+    function openInfo(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+        tablinks[i].style.backgroundColor="white"
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+      evt.currentTarget.style.backgroundColor="#ffcbd1";
+    }
+    
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+
+{% comment %} code for adding more row on pressing add button {% endcomment %}
+/* Variables */
+var row = $(".attr");
+
+function addRow() {
+  row.clone(true, true).appendTo("#attributes");
+}
+
+function removeRow(button) {
+  button.closest("div.attr").remove();
+}
+
+$('#attributes .attr:first-child').find('.remove').hide();
+
+/* Doc ready */
+$(".add").on('click', function () {
+  addRow();  
+  if($("#attributes .attr").length > 1) {
+    //alert("Can't remove row.");
+    $(".remove").show();
+  }
+});
+$(".remove").on('click', function () {
+  if($("#attributes .attr").length == 1) {
+    //alert("Can't remove row.");
+    $(".remove").hide();
+  } else {
+    removeRow($(this));
+    
+    if($("#attributes .attr").length == 1) {
+        $(".remove").hide();
+    }
+    
+  }
+});
+
+/* Variables */
+var row1 = $(".attr1");
+
+function addRow1() {
+  row1.clone(true, true).appendTo("#attributes1");
+}
+
+function removeRow1(button) {
+  button.closest("div.attr1").remove();
+}
+
+$('#attributes1 .attr1:first-child').find('.remove1').hide();
+
+/* Doc ready */
+$(".add1").on('click', function () {
+  addRow1();  
+  if($("#attributes1 .attr1").length > 1) {
+    //alert("Can't remove row.");
+    $(".remove1").show();
+  }
+});
+$(".remove1").on('click', function () {
+  if($("#attributes1 .attr1").length == 1) {
+    //alert("Can't remove row.");
+    $(".remove1").hide();
+  } else {
+    removeRow1($(this));
+    
+    if($("#attributes1 .attr1").length == 1) {
+        $(".remove1").hide();
+    }
+    
+  }
+});
+
+/* Variables */
+var row2 = $(".attr2");
+
+function addRow2() {
+  row2.clone(true, true).appendTo("#attributes2");
+}
+
+function removeRow2(button) {
+  button.closest("div.attr2").remove();
+}
+
+$('#attributes2 .attr2:first-child').find('.remove2').hide();
+
+/* Doc ready */
+$(".add2").on('click', function () {
+  addRow2();  
+  if($("#attributes2 .attr2").length > 1) {
+    //alert("Can't remove row.");
+    $(".remove2").show();
+  }
+});
+$(".remove2").on('click', function () {
+  if($("#attributes2 .attr2").length == 1) {
+    //alert("Can't remove row.");
+    $(".remove2").hide();
+  } else {
+    removeRow2($(this));
+    
+    if($("#attributes2 .attr2").length == 1) {
+        $(".remove2").hide();
+    }
+    
+  }
+});
+
+const toastElement = document.getElementById("toast")
+const toastBody = document.getElementById("toast-body")
+
+const toast = new bootstrap.Toast(toastElement, { delay: 2000 })
+
+
+const chBoxes = 
+            document.querySelectorAll('.dropdown-menu input[type="checkbox"]'); 
+        const dpBtn =  
+            document.getElementById('multiSelectDropdown'); 
+        let mySelectedListItems = []; 
+  
+        function handleCB() { 
+            mySelectedListItems = []; 
+            let mySelectedListItemsText = ''; 
+  
+            chBoxes.forEach((checkbox) => { 
+                if (checkbox.checked) { 
+                    mySelectedListItems.push(checkbox.placeholder); 
+                    mySelectedListItemsText += checkbox.placeholder + ', '; 
+                } 
+            }); 
+  
+            dpBtn.innerText = 
+                mySelectedListItems.length > 0 
+                    ? mySelectedListItemsText.slice(0, -2) : 'Select'; 
+        } 
+  
+        chBoxes.forEach((checkbox) => { 
+            checkbox.addEventListener('change', handleCB); 
+        }); 
+    </script>
+{% endblock additional-script %}
+

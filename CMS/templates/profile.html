@@ -1,0 +1,481 @@
+{% extends 'base.html' %}
+{% block signup_button %}
+<div class="signup-button">
+  <a class="btn btn-primary btn-lg shadow-lg" href="/logout/" style="margin-right:12px;" role="button">
+    Logout
+  </a>
+  
+</div>
+{% endblock %}
+{% block title %}Profile - KJSIT Conference Management System{% endblock %}
+{% block additional-css %}
+
+.search_container{
+  min-width: 550px;
+  
+}
+
+
+.search_container .searchInput{
+  background: #fff;
+  width: 100%;
+  border-radius: 5px;
+  position:relative;
+  box-shadow: 0px 1px 5px 3px rgba(0,0,0,0.12);
+}
+
+.searchInput input{
+  height: 55px;
+  width: 100%;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0 0px 0 20px;
+  font-size: 18px;
+  box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+}
+
+.searchInput.active input{
+  border-radius: 5px 5px 0 0;
+}
+
+.searchInput .resultBox{
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.searchInput.active .resultBox{
+  padding: 10px 8px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.resultBox li{
+  list-style: none;
+  padding: 8px 12px;
+  display: none;
+  width: 100%;
+  cursor: default;
+  border-radius: 3px;
+}
+
+.searchInput.active .resultBox li{
+  display: block;
+}
+.resultBox li:hover{
+  background: #efefef;
+}
+
+.searchInput .icon{
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  height: 55px;
+  width: 55px;
+  text-align: center;
+  line-height: 55px;
+  font-size: 20px;
+  color: #644bff;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 770px) {
+  .col{
+    min-width:-webkit-fill-available;
+    margin-bottom:10px;
+  }
+}  
+.ag-conference_box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+
+  padding: 50px 0;
+}
+.ag-conference_item {
+  -ms-flex-preferred-size: calc(33.33333% - 30px);
+  flex-basis: calc(33.33333% - 30px);
+
+  margin: 0 15px 30px;
+
+  overflow: hidden;
+
+  border-radius: 28px;
+}
+.ag-conference-item_link {
+  display: block;
+  padding: 30px 20px;
+  background-color: #121212;
+
+  overflow: hidden;
+
+  position: relative;
+}
+.ag-conference-item_link:hover,
+.ag-conference-item_link:hover .ag-conference-item_role {
+  text-decoration: none;
+  color: #FFF;
+}
+.ag-conference-item_link:hover .ag-conference-item_bg {
+  -webkit-transform: scale(10);
+  -ms-transform: scale(10);
+  transform: scale(10);
+}
+.ag-conference-item_title {
+  min-height: 87px;
+  margin: 0 0 25px;
+
+  overflow: hidden;
+  text-decoration:inherit;
+  font-weight: bold;
+  font-size: 30px;
+  color: #fff;
+
+  z-index: 2;
+  position: relative;
+}
+.ag-conference-item_role-box {
+  font-size: 18px;
+  color: #FFF;
+  text-decoration:inherit;
+  z-index: 2;
+  position: relative;
+}
+.ag-conference-item_role {
+  font-weight: bold;
+  color: #f9b234;
+
+  -webkit-transition: color .5s ease;
+  -o-transition: color .5s ease;
+  transition: color .5s ease
+}
+.ag-conference-item_bg {
+  height: 128px;
+  width: 128px;
+  background-color: #e44002;
+
+  z-index: 1;
+  position: absolute;
+  top: -75px;
+  right: -75px;
+
+  border-radius: 50%;
+
+  -webkit-transition: all .5s ease;
+  -o-transition: all .5s ease;
+  transition: all .5s ease;
+}
+
+
+@media only screen and (max-width: 979px) {
+  .ag-conference_item {
+    -ms-flex-preferred-size: calc(50% - 30px);
+    flex-basis: calc(50% - 30px);
+  }
+  .ag-conference-item_title {
+    font-size: 24px;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .ag-format-container {
+    width: 96%;
+  }
+
+}
+@media only screen and (max-width: 639px) {
+  .ag-conference_item {
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+  }
+  .ag-conference-item_title {
+    min-height: 72px;
+    line-height: 1;
+
+    font-size: 24px;
+  }
+  .ag-conference-item_link {
+    padding: 22px 40px;
+  }
+  .ag-conference-item_role-box {
+    font-size: 16px;
+  }
+}
+
+@media only screen and (max-width: 430px) {
+    .search_container{
+      min-width:auto;
+    }
+  
+    .image-box{
+      display:none;
+    }
+    .text-box{
+      text-align:center;
+    }
+  }
+{% endblock additional-css %}
+{% block content %}
+<center>
+    <div class="row" style="max-width:fit-content;">
+        <div class="container_main" style="max-width:800px;margin: 30px auto;display:flex;" >
+            <div class="search_container" >
+              <div class="searchInput shadow-lg">
+                <input type="text" placeholder="Search " >
+              <div class="resultBox" >
+                
+              </div>
+              <div class="icon" ><i class="fas fa-search"></i></div>
+              </div>
+            </div>
+            
+            <div class="create-button" style="margin-left:15px;">
+              <button class="btn" style="min-height:70px;min-width:150px;border-radius:50px;background-color: DodgerBlue;
+                color: white;
+                font-size: 25px; 
+                cursor: pointer;
+               " type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
+               <span data-bs-toggle="modal" data-bs-target="#myModal" >
+               <i class="fa fa-plus-circle"></i> 
+                Create
+               </span>
+              </button>
+            </div>   
+        </div>
+    </div>
+</center> 
+<div class="modal fade dark-modal" id="myModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#a70000;color:#fff;">
+        <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Conference Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
+      </div>
+      <div class="modal-body" style="overflow-x:hidden;">
+        <form enctype="multipart/form-data" action='/add_conference/' method='POST' >
+        {% csrf_token %}
+        <div class="row" style="margin-top:10px;">
+          <div class="form-floating" style=" text-align:center; margin-left:20px;">
+            <input type="text" name="title" class="form-control" id="floatingInput1" placeholder="Firstname" style="width: 95%" required>
+            <label for="floatingInput1" style="margin-left: 10px;">Title</label>                            
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <div class="form-floating" style=" text-align:center; margin-left:20px;">
+            <input type="text" name="institute" class="form-control" id="floatingInput2" placeholder="Firstname" style="width: 95%" required>
+            <label for="floatingInput2" style="margin-left: 10px;">Organizing Institute</label>                            
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <div class="col">
+            <div class="form-floating" style=" text-align:center; margin-left:20px;">
+              <textarea type="text" name="aboutInstitute" class="form-control" id="floatingInput3" placeholder="Firstname" style="min-height: 130px; width: 95%;" ></textarea>
+              <label for="floatingInput3">About Institute</label>                            
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-floating" style=" text-align:center; margin-left:20px;">
+              <textarea type="text" name="aboutConference" class="form-control" id="floatingInput4" placeholder="Firstname" style="min-height: 130px; width: 95%;" ></textarea>
+              <label for="floatingInput4">About Conference</label>                            
+            </div>
+          </div>
+        </div>
+        <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Important Dates</label></strong>
+       
+        <div class="row" style="margin-top:10px;">
+          <div class="col">
+            <div class="form-floating" style=" text-align:center; margin-left:20px;">
+              <input type="date" name="submissionDeadline" class="form-control" id="floatingInput5" placeholder="Firstname" style="width: fit-content;" required>
+              <label for="floatingInput5">Submission Deadline</label>                            
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-floating" style=" text-align:center; margin-left:20px;">
+              <input type="date" name="notificationOfAcceptance" class="form-control" id="floatingInput6" placeholder="Firstname" style="width: fit-content;" required>
+              <label for="floatingInput6">Notification of Acceptance</label>                            
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-floating" style=" text-align:center; margin-left:20px;">
+              <input type="date" name="registrationDeadline" class="form-control" id="floatingInput7" placeholder="Firstname" style="width: fit-content;" required>
+              <label for="floatingInput7">Registration Deadline</label>                            
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <div class="col-auto">
+            <div class="form-floating" style=" text-align:center; margin-left:20px;">
+            <input type="date" name="cameraReadyPapers" class="form-control" id="floatingInput8" placeholder="Firstname" style="width: fit-content;" required>
+            <label for="floatingInput8">Camera Ready Papers</label>                            
+          </div>
+          </div>
+          <div class="col-auto">
+            <div class="form-floating" style=" text-align:center; margin-left:20px;">
+            <input type="date" name="conferenceDate" class="form-control" id="floatingInput9" placeholder="Firstname" style="width: fit-content;" required>
+            <label for="floatingInput9">Conference Date</label>                            
+          </div>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+          <div class="form-floating" style=" text-align:center; margin-left:20px;">
+            <input type="text" name="venue" class="form-control" id="floatingInput10" placeholder="Firstname" style="width: 95%;" >
+            <label for="floatingInput10" style="margin-left: 10px;">Conference Venue</label>                            
+          </div>
+        </div>
+        
+        <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Committees</label></strong>
+        <center><label style="margin-bottom: 5px;">Add images containing details of various committees</label></center>
+        <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
+          <div class="form-floating" style=" text-align:center; margin-left:20px;">
+            <input type="file" name="committeeImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
+            <label for="floatingInput17" style="margin-left: 10px;">Committee details</label>                            
+          </div>
+        </div>
+        <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Images</label></strong>
+        <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
+          <div class="form-floating" style=" text-align:center; margin-left:20px;">
+            <input type="file" name="conferenceImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
+            <label for="floatingInput17" style="margin-left: 10px;">Images related to Conference and Institute</label>                            
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Create</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+{% if not enrolled_as_programChair and not enrolled_as_author and not enrolled_as_reviewer %}
+<center>
+<h3>Not enrolled in any conference</h3>
+</center>
+{% else %}
+<div class="ag-conference_box">
+{% for conference in enrolled_as_programChair %}
+<div class="ag-conference_item">
+  <a href="/conference/{{conference.id}}/programChair/" class="ag-conference-item_link">
+    <div class="ag-conference-item_bg"></div>
+
+    <div class="ag-conference-item_title">
+      {{conference.conferenceTitle}}
+    </div>
+
+    <div class="ag-conference-item_role-box">
+      Role:
+      <span class="ag-conference-item_role">
+        Program Chair
+      </span>
+    </div>
+  </a>
+</div>
+{% endfor %}
+
+{% for conference in enrolled_as_author %}
+<div class="ag-conference_item">
+  <a href="/conference/{{conference.id}}/author/" class="ag-conference-item_link">
+    <div class="ag-conference-item_bg"></div>
+
+    <div class="ag-conference-item_title">
+      {{conference.conferenceTitle}}
+    </div>
+
+    <div class="ag-conference-item_role-box">
+      Role:
+      <span class="ag-conference-item_role">
+        Author
+      </span>
+    </div>
+  </a>
+</div>
+{% endfor %}
+
+{% for conference in enrolled_as_reviewer %}
+<div class="ag-conference_item">
+  <a href="/conference/{{conference.id}}/reviewer/" class="ag-conference-item_link">
+    <div class="ag-conference-item_bg"></div>
+
+    <div class="ag-conference-item_title">
+      {{conference.conferenceTitle}}
+    </div>
+
+    <div class="ag-conference-item_role-box">
+      Role:
+      <span class="ag-conference-item_role">
+        Reviewer
+      </span>
+    </div>
+  </a>
+</div>
+{% endfor %}
+
+</div>
+{%endif%}
+{% endblock %}
+
+{% block additional-script %}
+    <script>
+     let suggestions = [
+     {% for conference in conferences %}
+     "{{conference.conferenceTitle}}",
+ {% endfor %}
+];
+
+// getting all required elements
+const searchInput = document.querySelector(".searchInput");
+const input = searchInput.querySelector("input");
+const resultBox = searchInput.querySelector(".resultBox");
+const icon = searchInput.querySelector(".icon");
+let linkTag = searchInput.querySelector("a");
+let webLink;
+
+// if user press any key and release
+input.onkeyup = (e)=>{
+    let userData = e.target.value; //user enetered data
+    let emptyArray = [];
+    if(userData){
+        emptyArray = suggestions.filter((data)=>{
+            //filtering array value and user characters to lowercase and return only those words which are start with user enetered chars
+            return data.toLocaleLowerCase().startsWith(userData.toLocaleLowerCase()); 
+        });
+        emptyArray = emptyArray.map((data)=>{
+            // passing return data inside li tag
+            return '<li><a href="/conference/' + data + '">' + data + '</a></li>';
+        });
+        searchInput.classList.add("active"); //show autocomplete box
+        showSuggestions(emptyArray);
+        let allList = resultBox.querySelectorAll("li");
+        for (let i = 0; i < allList.length; i++) {
+            //adding onclick attribute in all li tag
+            allList[i].setAttribute("onclick", "select(this)");
+        }
+    }else{
+        searchInput.classList.remove("active"); //hide autocomplete box
+    }
+}
+
+function showSuggestions(list){
+    let listData;
+    if(!list.length){
+        userValue = input.value;
+        listData = '<li>'+ userValue +'</li>';
+    }else{
+        listData = list.join('');
+    }
+    resultBox.innerHTML = listData;
+}
+
+
+
+</script>
+{% endblock %} 
