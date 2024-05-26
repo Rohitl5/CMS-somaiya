@@ -88,14 +88,14 @@ class Conference(models.Model):
 
 class committeeImages(models.Model):
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
-    committee_image=models.FileField(upload_to='desktop',null=True)
+    committee_image=models.FileField(upload_to='image/',null=True)
 
     def __str__(self):
         return self.conference.conferenceTitle
     
 class conferenceImages(models.Model):
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
-    conference_image=models.FileField(upload_to='desktop',null=True)
+    conference_image=models.FileField(upload_to='image/',null=True)
 
     def __str__(self):
         return self.conference.conferenceTitle
@@ -144,7 +144,7 @@ class Paper(models.Model):
 
     papertitle = models.CharField(max_length=255)
     abstract = models.TextField()
-    file = models.FileField(upload_to='papers/')
+    file = models.FileField(upload_to='paper/')
     conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
     authors = models.ForeignKey(Author, on_delete=models.CASCADE)

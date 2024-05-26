@@ -110,10 +110,27 @@ def programChair(request,conference_id):
         return render(request, 'program_chair.html',context={"conference":conference,"authors":authors,"uploadedpapers":papers,"reviewers":reviewers,"reviews":reviews})
 
 def conferences(request,conference_id):
-    conference = get_object_or_404(Conference, conferenceTitle=conference_id)
-    tracks= Track.objects.filter(conference_id=conference.id).all().values()
+     
+    cc=conference_id.strip()   
+    global ccc
+    global c2
+    conf = Conference.objects.all()
+    for c in conf:
+        cccc=c.conferenceTitle.strip()
+        if(cccc==cc):
+         c2=c.id
+        
 
-    return render(request, 'view_conferences.html',context={"conference":conference,"tracks":tracks})
+
+    conference=Conference.objects.get(id=c2)
+    print(conference)
+    # conference = get_object_or_404(Conference, conferenceTitle=conference_id)          //this might be most probable code but i found it not working for some cases so i replaced it with the one above
+    tracks= Track.objects.filter(conference_id=conference.id).all().values()
+    org=committeeImages.objects.filter(conference=conference.id)
+    img=conferenceImages.objects.filter(conference=conference.id) 
+
+    return render(request, 'view_conferences.html',context={"conference":conference,"tracks":tracks,"org":org,"img":img,})
+
 
 def add_conference(request):
     if request.user.is_authenticated:
@@ -156,7 +173,7 @@ def add_conference(request):
                 conference=conference,
                 conference_image=image2
             )
-            committee_images.save()
+            conference_images.save()
         
         messages.info(request,"Conference created successfully and you are the program chair now !")
         return redirect('/conference/'+str(conference.id)+'/programChair/')
@@ -191,19 +208,22 @@ def edit_conference(request,conference_id):
                          conference_date=conference_date,
                          conference_venue=conference_venue
                          )
+       
+
        for image1 in committee_images:
-            committee_images=committeeImages.objects.create(
-                conference=Conference.objects.filter(id=conference_id),
-                committee_image=image1
-            )
-            committee_images.save()
+        conference_instance = Conference.objects.get(id=conference_id)
+        committee_image = committeeImages.objects.create(
+        conference=conference_instance,
+        committee_image=image1
+        )
+        committee_image.save()
         
        for image2 in conference_images:
-            conference_images=conferenceImages.objects.create(
-                conference=Conference.objects.filter(id=conference_id),
-                conference_image=image2
-            )
-            committee_images.save()
+          conference = Conference.objects.get(id=conference_id)  # Get the conference instance
+          new_image = conferenceImages(conference=conference, conference_image=image2)
+          new_image.save()
+    
+         
        
        messages.info(request,"Changes made to the conference successfully")
        return redirect('/conference/'+str(conference_id)+'/programChair/')
@@ -758,3 +778,24 @@ def submitreview(request,conference_id,paper_id):
      send_mail(subject,message2,email_from,recipient_list2)
     messages.info(request,"Review submitted.")
     return redirect('/conference/' + str(conference_id) + '/reviewer/')
+
+
+# show the submitted papers by the authors 
+
+def displaypdf(request,paper_id,conference_id):
+   conference = Conference.objects.get( id=conference_id)
+   paper=Paper.objects.get(id=paper_id)
+   path=paper.file.url
+   txt=path.split('/',1)
+   pdf_file=txt[1]
+   file_name, file_extension = os.path.splitext(paper.file.url)
+   if(file_extension=='.pdf'):
+       with open(pdf_file, 'rb') as pdf:
+            response = HttpResponse(pdf.read(), content_type='application/pdf')
+            response['Content-Disposition'] = 'inline;filename=mypdf.pdf'
+            return response
+   else:
+        context={"paper":paper,"conference":conference,"file":pdf_file}
+        return render(request,'display.html',context)
+
+

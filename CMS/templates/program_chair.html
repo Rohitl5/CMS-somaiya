@@ -280,6 +280,13 @@ th, td {
                 {% for paper in uploadedpapers %}
                 <tr>
                   <th class="title-column">&nbsp;&nbsp;{{paper.papertitle}}</th>
+{% comment %} the pdf view {% endcomment %}
+                  <th>
+                  <button class="btn btn-primary" style="border-radius:50%" type="button" >
+                    <a class="  text-light fas fa-file" href="{{paper.id}}" target="blank"></a>
+                  </button>
+                  </th>
+
                   <th>
                   <button class="btn btn-primary" style="border-radius:50%" type="button"  data-bs-toggle="modal" data-bs-target="#viewpaperdata{{paper.id}}">
                     <i class="fas fa-info" ></i>
@@ -533,7 +540,7 @@ th, td {
                         {% for author in authors %}
                           <tr>
                             <td>{{ author.user.first_name }} {{ author.user.last_name }}</td>
-                            <button class="btn btn-primary" type="button"  data-bs-toggle="modal" data-bs-target="#viewauthordata">
+                            <button  class="btn btn-primary mx-4" type="button"  data-bs-toggle="modal" data-bs-target="#viewauthordata">
                               Info
                             </button>
                             <!-- Add more columns for other reviewer details if needed -->
@@ -548,19 +555,74 @@ th, td {
                  </div>
                  <div class="about-institute"  style="background-color:white;">
                   <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;margin-right:10px;">&nbsp;Reviewers</a>
-                  <div class="text" style="margin:15px;"> 
-                    <center>
-                      <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
-                        (Reviewers)
-                      </h6>
-                      
-                    <center>
+                  <div class="text" style="margin:15px;">
+                        {% for reviewer in reviewer %}
+                          <tr>
+                            <td>{{ reviewer.user.first_name}} {{ reviewer.user.last_name }}</td>
+                            <button  class="btn btn-primary mx-4" type="button"  data-bs-toggle="modal" data-bs-target="#viewreviewerdata">
+                              Info
+                            </button>
+                            <!-- Add more columns for other reviewer details if needed -->
+                            </tr>
+                            {% empty %}
+                            <center>
+                            <h6 style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+                              (Reviewers)
+                            </h6>
+                            <center>
+                            {% endfor %}                   
+                   
                   </div>    
                  </div> 
             </div> 
         </div> 
      
     </div> 
+
+{% comment %} 23/5/24 : rohit : added this modal for reviewer {% endcomment %}
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="#viewreviewerdata" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">About Reviewer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
+          {% for reviewer in reviewer %}
+           <tr>
+             <th> Name </th>
+             <th>{{riviewer.user.first_name}} {{reviewer.user.last_name}}</th>
+             
+           </tr>
+           <tr>
+             <th>Email</th>
+             <th>{{reviewer.user.email}}</th>
+           </tr>
+           <tr>
+             <th>Profession  </th>
+             <th>{{reviewer.user.profession}}</th>
+             
+           </tr>
+           <tr>
+            <td> Affiliated to {{reviewer.user.afiliation}} as {{reviewer.user.role}}.</td>
+             
+           </tr>
+           {% endfor%}
+         </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} end {% endcomment %}
 
     <div class="modal fade" id="viewauthordata" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -571,7 +633,7 @@ th, td {
           </div>
           <div class="modal-body">
            <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
-            
+            {% for author in authors %}
              <tr>
                <th> Name </th>
                <th>{{author.user.first_name}} {{author.user.last_name}}</th>
@@ -579,18 +641,18 @@ th, td {
              </tr>
              <tr>
                <th>Email</th>
-               {{author.user.email}}
+               <th>{{author.user.email}}</th>
              </tr>
              <tr>
-               <td>Profession  </td>
-               <td>{{author.user.profession}}</td>
+               <th>Profession  </th>
+               <th>{{author.user.profession}}</th>
                
              </tr>
              <tr>
-               Affiliated to {{author.user.afiliation}} as {{author.user.role}}.
+              <td> Affiliated to {{author.user.afiliation}} as {{author.user.role}}.</td>
                
              </tr>
-             
+             {% endfor%}
            </table>
            
            <div class="row">

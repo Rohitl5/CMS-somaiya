@@ -244,9 +244,21 @@
         </div>
         <div id="committee" class="tabcontent" >
             committee
+            {% for og in org %}
+            <ul>
+                <img style="width:100%;height:auto"  src={{ og.committee_image.url}}>
+            </ul>
+        {% endfor %}
+
         </div>
         <div id="photos" class="tabcontent" >
              Images
+             {%for image in img%}
+             <ul>
+               <img style="width:100%;height:auto"  src={{ image.conference_image.url}}>
+             </ul>
+             {% endfor %}
+
         </div>
        </div>
       </div>

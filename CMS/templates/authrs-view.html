@@ -114,12 +114,14 @@
   <div class="main-body" style="display:flex;background-color:#f2f2f2;justify-content:center;width:fit-content;margin-left:auto;margin-right:auto;">
     
     <div class="tabs">
-      <a style="height:60px;width:250px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;color:#494F55;margin-top:5px;display:block;background-color:white">
+      {% for paper in uploadedpapers %}
+      <a style="height:60px;width:250px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;color:#494F55;margin-top:5px;display:block;background-color:white"  href="{{paper.id}}" target="blank">
         <div style="padding-top:15px; ">
         &nbsp;&nbsp;&nbsp;<i class="fas fa-pager" style=""></i>
         &nbsp;Past Submissions
         </div>
       </a>
+      {% endfor%}
             <!-- Button trigger modal -->
       <div class="status-colors">
         <table style="margin-left:auto;margin-right:auto;margin-bottom:30px;">
