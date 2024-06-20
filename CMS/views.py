@@ -254,9 +254,21 @@ def inviteReviewer(request,conference_id):
 
 def author_request(request,conference_id):
     
-    if  request.user.is_authenticated:
-          author_exists=Author.objects.filter(user=request.user).exists()
-          conference= Conference.objects.get(id=conference_id)
+    # if  request.user.is_authenticated:
+    #       author_exists=Author.objects.filter(user=request.user).exists()
+    #       conference= Conference.objects.get(id=conference_id)
+
+    # the below code snippets check for if author for confernece exists 
+    if request.user.is_authenticated:
+          try:
+                    conference = Conference.objects.get(id=conference_id)
+          except Conference.DoesNotExist:
+                    messages.error(request, "Conference not found.")
+                    return redirect('/conferences/')
+
+          author_exists = Author.objects.filter(user=request.user, conferences=conference).exists()
+
+
 
           if author_exists :
            messages.info(request,"You are already an author. ")
@@ -277,8 +289,13 @@ def author_request(request,conference_id):
     
 def reviewer_request(request,conference_id):
     if request.user.is_authenticated:
-          if request.method=="POST":
-           reviewer_exists=Reviewer.objects.filter(user=request.user).exists()
+        if request.method=="POST":
+           try:
+                 conference = Conference.objects.get(id=conference_id)
+           except Conference.DoesNotExist:
+                    messages.error(request, "Conference not found.")
+                    return redirect('/conferences/')
+           reviewer_exists=Reviewer.objects.filter(user=request.user, conferences=conference).exists()
           
            if reviewer_exists :
             messages.info(request,"You are already a reviewer in this conference. ")
