@@ -640,7 +640,7 @@ def export_data(request,conference_id,choice):
 @login_required
 def author(request,conference_id):
     conference = get_object_or_404(Conference, id=conference_id)
-    author=Author.objects.get(user=request.user)
+    author=Author.objects.get(user=request.user ,conferences=conference) # added the conferences=conference (22/6/24 11:02)
     is_registered = registered_authors.objects.filter(author=author, conference=conference).exists()
 
     # is_author=Author.objects.filter(user=request.user,conferences=conference).exists()
@@ -749,7 +749,7 @@ def resubmit_paper(request, conference_id,paper_id):
 @login_required
 def reviewer(request,conference_id):
     conference = get_object_or_404(Conference, id=conference_id)
-    reviewer=Reviewer.objects.get(user=request.user)
+    reviewer=Reviewer.objects.get(user=request.user ,conferences =conference)
     papers = Paper.objects.filter(reviewers=reviewer, conference=conference).exclude(review__reviewer=reviewer)
     reviews=Review.objects.filter(reviewer=reviewer)
     context={"conference":conference,"papers":papers,"reviews":reviews}
