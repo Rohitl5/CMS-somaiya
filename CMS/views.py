@@ -295,7 +295,7 @@ def reviewer_request(request,conference_id):
            except Conference.DoesNotExist:
                     messages.error(request, "Conference not found.")
                     return redirect('/conferences/')
-           reviewer_exists=Reviewer.objects.filter(user=request.user, conferences=conference).exists()
+           reviewer_exists=Reviewer.objects.filter(user=request.user, conference=conference).exists()
           
            if reviewer_exists :
             messages.info(request,"You are already a reviewer in this conference. ")
@@ -662,7 +662,7 @@ def author(request,conference_id):
        file = request.FILES['paper']
        conf = conference
        track = get_object_or_404(Track,title=request.POST["track"])
-       authors = get_object_or_404(Author,user=request.user)
+       authors = get_object_or_404(Author,user=request.user ,conferences =conference)
        status = 'submitted'
        keywords= request.POST['keywords']
        submissionDate= timezone.now().date() 
@@ -749,7 +749,7 @@ def resubmit_paper(request, conference_id,paper_id):
 @login_required
 def reviewer(request,conference_id):
     conference = get_object_or_404(Conference, id=conference_id)
-    reviewer=Reviewer.objects.get(user=request.user )
+    reviewer=Reviewer.objects.get(user=request.user , conference =conference)
     papers = Paper.objects.filter(reviewers=reviewer, conference=conference).exclude(review__reviewer=reviewer)
     reviews=Review.objects.filter(reviewer=reviewer)
     context={"conference":conference,"papers":papers,"reviews":reviews}
@@ -758,7 +758,7 @@ def reviewer(request,conference_id):
 @login_required
 def submitreview(request,conference_id,paper_id):
     paper=Paper.objects.get(id=paper_id) 
-    reviewer=Reviewer.objects.get(user=request.user)
+    reviewer=Reviewer.objects.get(user=request.user )
     relevance = request.POST["relevance"]
     writingStyle = request.POST["writingstyle"]
     reviewerConfidence = request.POST["resultanalysis"]
@@ -804,7 +804,7 @@ def displaypdf(request,paper_id,conference_id):
    paper=Paper.objects.get(id=paper_id)
    path=paper.file.url
    txt=path.split('/',1)
-   pdf_file=txt[1]
+   pdf_file=txt[1]                # note : here for local host this path is valid it may change for different server where you upload so change accordingly 
    file_name, file_extension = os.path.splitext(paper.file.url)
    if(file_extension=='.pdf'):
        with open(pdf_file, 'rb') as pdf:
@@ -813,6 +813,7 @@ def displaypdf(request,paper_id,conference_id):
             return response
    else:
         context={"paper":paper,"conference":conference,"file":pdf_file}
+        print(context)
         return render(request,'display.html',context)
 
 
