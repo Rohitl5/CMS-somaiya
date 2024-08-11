@@ -127,8 +127,10 @@
               <div class="icon" ><i class="fas fa-search"></i></div>
               </div>
             </div>
+
+            {% comment %} create button only principal sir can access {% endcomment %}
             
-            <div class="create-button" style="margin-left:15px;">
+            {% comment %} <div class="create-button" style="margin-left:15px;">
               <button class="btn" style="min-height:70px;min-width:150px;border-radius:50px;background-color: DodgerBlue;
                 color: white;
                 font-size: 25px; 
@@ -139,8 +141,9 @@
                 Create
                </span>
               </button>
-            </div>    
-            <div class="modal fade dark-modal" id="myModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            </div>   {% endcomment %}
+
+            {% comment %} <div class="modal fade dark-modal" id="myModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-scrollable">
                   <div class="modal-content">
                     <div class="modal-header" style="background-color:#a70000;color:#fff;">
@@ -242,10 +245,11 @@
                   </form>
                   </div>
                 </div>
-            </div>
+            </div> {% endcomment %}
         </div>
     </div>
   </center>
+  
   <center>
     <div class="intro-text" style="font-weight:100;margin:50px;">
           <a style="font-size:40px;">Create,Manage And Contribute To Conferences</a><br>

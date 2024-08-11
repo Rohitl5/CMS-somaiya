@@ -237,6 +237,8 @@
               </div>
             </div>
             
+            {% if request.user.is_authenticated %}
+            {% if permission == 1%}
             <div class="create-button" style="margin-left:15px;">
               <button class="btn" style="min-height:70px;min-width:150px;border-radius:50px;background-color: DodgerBlue;
                 color: white;
@@ -248,7 +250,11 @@
                 Create
                </span>
               </button>
-            </div>   
+            </div>
+            {% endif%} 
+            {% endif%}
+            
+
         </div>
     </div>
 </center> 

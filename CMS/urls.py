@@ -13,6 +13,7 @@ urlpatterns = [ path('', views.index, name='index'),
                 path('conference/<str:conference_id>', views.conferences, name='conference'),
                 
                 
+                path('conference/<int:conference_id>/programChair/delete/<int:paper_id>',views.deletePaper,name="deletePaper"),
                 path('conference/<int:conference_id>/programChair/<int:paper_id>',views.displaypdf,name="displaypdf"),
                 path('conference/<int:conference_id>/programChair/',views.programChair,name="programChair-view"),
                 path('conference/<int:conference_id>/programChair/addTrack/',views.addTrack,name="programChair-view"),
@@ -34,6 +35,7 @@ urlpatterns = [ path('', views.index, name='index'),
                 path('conference/<int:conference_id>/author/register_author/',views.register_author,name="authors-view"),
                 path('conference/<int:conference_id>/author/<int:paper_id>',views.displaypdf,name="displaypdf"),
 
+                path('conference/<int:conference_id>/reviewer/<int:paper_id>',views.displaypdf,name="displaypdf"),
                 path('conference/<int:conference_id>/request_reviewer/',views.reviewer_request,name="conference"),
                 path('conference/<int:conference_id>/add_reviewer=<int:user_id>/',views.add_reviewer,name="reviewer-view"),
                 path('conference/<int:conference_id>/reviewer/',views.reviewer,name="reviewer-view"),

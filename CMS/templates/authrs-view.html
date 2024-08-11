@@ -325,6 +325,11 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
+                  {% if not is_registered %}
+                  <a href="{}" class="btn btn-warning">Proceed to Payment</a>
+                {% else %}
+                
                   <table style="text-align:left;padding-bottom:30px;padding-left:10px;padding-right:10px;">
                     
                     {% for review in reviews  %}
@@ -367,10 +372,11 @@
                        <!-- Paper does not have reviews -->
                        <p>This paper was rejected by the program chair as it got high plagarism. Kindly check and perform the neccesary changes and resubmit.</p>
                     {% endif %}   
-                    
+                   
                   
                   
                 </table>
+                {% endif%}
                 </div>    
                 <div class="modal-footer">
                   {% if paper.status == "rejected" or paper.status == "Rejected due to Plagarism"%}

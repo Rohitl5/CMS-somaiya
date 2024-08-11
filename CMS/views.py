@@ -87,7 +87,15 @@ def profile(request):
     enrolled_as_programChair=Conference.objects.filter(programChair=request.user).values()
     enrolled_as_author= Conference.objects.filter(author__user=request.user)
     enrolled_as_reviewer= Conference.objects.filter(reviewer__user=request.user)
-    return render(request, 'profile.html',context={"conferences":conferences,"enrolled_as_programChair":enrolled_as_programChair,"enrolled_as_author":enrolled_as_author,"enrolled_as_reviewer":enrolled_as_reviewer})
+    permission =0
+    if request.user.is_authenticated:
+        euser = user.objects.filter(id=request.user.id).values('id', 'email').first()
+        if euser:
+            specific_email = "rohit15@somaiya.edu"  # replace with the specific email you want to have the permission to create conference
+            if euser['email'] == specific_email:
+                permission=1;
+    
+    return render(request, 'profile.html',context={"conferences":conferences,"enrolled_as_programChair":enrolled_as_programChair,"enrolled_as_author":enrolled_as_author,"enrolled_as_reviewer":enrolled_as_reviewer,"permission":permission})
 
 @login_required
 def logout_view(request):
@@ -277,13 +285,27 @@ def author_request(request,conference_id):
            messages.info(request,"You can't register now as the registration deadline is over. ")
            return redirect('/conference/'+str(conference.conferenceTitle))  
           else :
-           subject = 'Request to join as an author'
-           message = 'Respected Program Chair,\n'+str(request.user.first_name)+' '+str(request.user.last_name)+' has request to enter "'+str(conference.conferenceTitle)+'"\nAuthor Deatils are:\nEmail- '+str(request.user.email)+'\nProfession- '+str(request.user.profession)+'\nAfiliated to '+str(request.user.afiliation)+' as '+str(request.user.role)+'\nTo add author click on the link: http://192.168.200.114:8000/conference/'+str(conference.id)+'/add_author='+str(request.user.id)+'/\n\nThankyou'
-           email_from = settings.EMAIL_HOST_USER
-           recipient_list = [conference.programChair ]
-           send_mail( subject, message, email_from, recipient_list )
-           messages.info(request,"Request sent to the Program Chair.Once he/she accepts the request you will be made author in the conference automatically.")
-           return redirect('/conference/'+str(conference.conferenceTitle))
+            ####   here we can send mail to program chair if want two step authentication
+
+        #    subject = 'Request to join as an author'
+        #    message = 'Respected Program Chair,\n'+str(request.user.first_name)+' '+str(request.user.last_name)+' has request to enter "'+str(conference.conferenceTitle)+'"\nAuthor Deatils are:\nEmail- '+str(request.user.email)+'\nProfession- '+str(request.user.profession)+'\nAfiliated to '+str(request.user.afiliation)+' as '+str(request.user.role)+'\nTo add author click on the link: http://192.168.200.114:8000/conference/'+str(conference.id)+'/add_author='+str(request.user.id)+'/\n\nThankyou'
+        #    email_from = settings.EMAIL_HOST_USER
+        #    recipient_list = [conference.programChair ]
+        #    send_mail( subject, message, email_from, recipient_list )
+        #    messages.info(request,"Request sent to the Program Chair.Once he/she accepts the request you will be made author in the conference automatically.")
+        #    return redirect('/conference/'+str(conference.conferenceTitle))
+          
+        ####  we dont need two step authentication
+                  conferencee = get_object_or_404(Conference, id=conference_id)
+                  author = user.objects.get(id=request.user.id)
+                
+                  new_author=Author.objects.create(user=author)
+                  new_author.conferences.add(conferencee)
+
+                  new_author.save()
+                  messages.info(request,"You are added as an Author.")
+                  return redirect('/conference/'+str(conference_id)+'/author/')  
+
     else:
         return render(request,'login.html')
     
@@ -312,6 +334,9 @@ def reviewer_request(request,conference_id):
             return redirect('/conference/'+str(conference.conferenceTitle))
     else:
          return render(request,'login.html')
+    
+
+# ### here author is added by programchair
     
 @login_required
 def add_author(request,conference_id,user_id):
@@ -374,6 +399,10 @@ def assign_reviewer(request, paper_id, conference_id):
             paper.reviewers.set(reviewers)
             paper.status = "under_review"
             paper.save()
+
+            assigned_reviewers = paper.reviewers.all()
+            print(f"Assigned reviewers for paper '{paper.papertitle}': {assigned_reviewers}")
+
 
             # Notify each reviewer
             for reviewer in reviewers:
@@ -648,8 +677,10 @@ def author(request,conference_id):
     tracks= Track.objects.filter(conference_id=conference.id).all().values()
     papers=Paper.objects.filter(authors=author).all().values()
     paper_names=Paper.objects.filter(authors=author).all().values('id')
-    reviews_for_submittedpapers = Review.objects.filter(paper__in=paper_names)
-
+    if(is_registered):
+      reviews_for_submittedpapers = Review.objects.filter(paper__in=paper_names)
+    else:
+      reviews_for_submittedpapers =None
 
     # for submitting paper 
     if request.method=="POST":
@@ -748,6 +779,7 @@ def resubmit_paper(request, conference_id,paper_id):
 #  views for reviewer   
 @login_required
 def reviewer(request,conference_id):
+    print(request.user)
     conference = get_object_or_404(Conference, id=conference_id)
     reviewer=Reviewer.objects.get(user=request.user , conference =conference)
     papers = Paper.objects.filter(reviewers=reviewer, conference=conference).exclude(review__reviewer=reviewer)
@@ -816,4 +848,29 @@ def displaypdf(request,paper_id,conference_id):
         print(context)
         return render(request,'display.html',context)
 
+
+
+
+@login_required
+def deletePaper(request, paper_id, conference_id):
+    conference = Conference.objects.get( id=conference_id)
+    paper = get_object_or_404(Paper, id=paper_id)
+    author=paper.authors
+    # Check if the user is the program chair for the conference
+    if not conference.is_chair(request.user):
+        return HttpResponseForbidden("You are not authorized to assign reviewers to this paper.")
+    
+    # delete the paper 
+    paper.delete()
+
+    # mail to the author
+    subject = 'Notification For Deleting your Paper.'
+    message = f'Respected {author.user.first_name} {author.user.last_name},'\
+            f'\nYour paper {paper.papertitle} from conference {conference.conferenceTitle} has been deleted successfully as requested .\n\nThank you'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [author.user.email]
+    send_mail(subject, message, email_from, recipient_list)
+
+    messages.info(request, "Paper deleted successfully, and notifying emails have been sent.")
+    return redirect('/conference/' + str(conference.id) + '/programChair/') 
 

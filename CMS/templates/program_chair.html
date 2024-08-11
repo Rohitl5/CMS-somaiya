@@ -279,6 +279,13 @@ th, td {
 
                 {% for paper in uploadedpapers %}
                 <tr>
+                  {% comment %} to delete the paper {% endcomment %}
+                  <th>
+                    <button class="btn btn-primary" style="border-radius:50%" type="button" onclick="confirmDelete(event, '{{paper.id}}')">
+                        <a class="text-light fas fa-trash" href="delete/{{paper.id}}" target="blank" style="text-decoration: none;"></a>
+                    </button>
+                </th>
+
                   <th class="title-column">&nbsp;&nbsp;{{paper.papertitle}}</th>
 {% comment %} the pdf view {% endcomment %}
                   <th>
@@ -286,6 +293,7 @@ th, td {
                     <a class="  text-light fas fa-file" href="{{paper.id}}" target="blank"></a>
                   </button>
                   </th>
+
 
                   <th>
                   <button class="btn btn-primary" style="border-radius:50%" type="button"  data-bs-toggle="modal" data-bs-target="#viewpaperdata{{paper.id}}">
@@ -365,7 +373,7 @@ th, td {
                                   <li> 
                                     <label> 
                                       <input type="checkbox" 
-                                             value="{{reviewer.user.id}}"
+                                             value="{{reviewer.id}}"
                                              name="reviewers"
                                              placeholder="{{reviewer.user.first_name}}"> 
                                           {{reviewer.user.first_name}} {{reviewer.user.last_name}}
@@ -383,8 +391,16 @@ th, td {
                                 Reject Paper
                               </button>
                               <ul class="dropdown-menu" >
-                                <li><a class="dropdown-item" href="/conference/{{conference.id}}/programChair/desktop_reject/{{paper.id}}">Desktop Reject</a></li>
-                                
+                                {% comment %} ### directly desktop rejrct the papers  {% endcomment %}
+                                {% comment %} <li><a class="dropdown-item" href="/conference/{{conference.id}}/programChair/desktop_reject/{{paper.id}}">Desktop Reject</a></li>  {% endcomment %}
+
+                                <li>
+                                  <a class="dropdown-item" href="#" onclick="confirmDesktopReject(event, '{{ conference.id }}', '{{ paper.id }}')">Desktop Reject</a>
+                              </li>
+                        
+                            
+                               
+
                                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#plagiarismModal{{paper.id}}">Reject due to plagarism</a></li>
                               </ul>
                               
@@ -682,7 +698,7 @@ th, td {
                              
                                <tr>
                                  <th> Name </th>
-                                 <th>{{riviewers.user.first_name}} {{reviewers.user.last_name}}</th>
+                                 <th>{{reviewers.user.first_name}} {{reviewers.user.last_name}}</th>
                                  
                                </tr>
                                <tr>
@@ -884,5 +900,25 @@ const chBoxes =
             checkbox.addEventListener('change', handleCB); 
         }); 
     </script>
+
+    {% comment %} script for confirming desktop reject and deleteig paper  {% endcomment %}
+
+    <script>
+      function confirmDesktopReject(event, conferenceId, paperId) {
+          event.preventDefault(); // Prevent the default link action
+          var userConfirmed = confirm("Are you sure you want to desktop reject this paper?");
+          if (userConfirmed) {
+              window.location.href = "/conference/" + conferenceId + "/programChair/desktop_reject/" + paperId;
+          }
+      }
+
+      function confirmDelete(event, paperId) {
+        event.preventDefault();
+        const userConfirmed = confirm("Are you sure you want to delete this paper?");
+        if (userConfirmed) {
+            window.location.href = 'delete/' + paperId;
+        }
+    }
+      </script>
 {% endblock additional-script %}
 
