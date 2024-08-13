@@ -46,12 +46,30 @@ background-color:#f2f2f2;
 </head>
 <body >
     <nav class="navbar fixed-top navbar-inverse " style="height:96px; background-color: #a70000; box-shadow: 0px 5px  #ff0000 ">
-            <div class="container">
+           
+        <div style="margin-right:1%; margin-left:3%;">
+        {% if request.user.is_authenticated %}
+        <a href="http://127.0.0.1:8000/profile/" class="profile-link btn btn-success btn-lg shadow-lg" title="Go to Profile">
+            <i class="fas fa-user-circle fa-2x"></i>
+        </a>
+        {%else%}
+        <a href="" class="profile-link btn btn-primary btn-lg shadow-lg" title="Go to Profile">
+                <i class="fas fa-user-circle fa-2x"></i>
+        </a>
+        {% endif %}
+        </div>
+        <div class="container">
+
               <a class="navbar-brand" style="font-family:Roboto; color:WHITE; font-weight:600;align-items:center; display:flex;" >
                 <img src="https://tnpportal.kjsieit.in/static/img/logo2.jpg" alt="Bootstrap" width="80" height="50" style="margin-right:15px;">
                 <div class="brand_for_laptop">Conference Management System</div>
                 
             </a>
+
+
+
+            
+
             {% block signup_button %}
             {% comment %} if sigup buttn add over here {% endcomment %}
             {% endblock signup_button %}
