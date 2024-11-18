@@ -151,7 +151,7 @@ class Paper(models.Model):
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='submitted')
     keywords=models.TextField()
     submissionDate=models.DateField()
-    otherauthors=models.CharField(max_length=125,null=True)
+    otherauthors=models.TextField(null=True, blank=True) 
     reviewers = models.ManyToManyField(Reviewer, related_name='papers', blank=True)
     
 

@@ -81,11 +81,12 @@ background-color:#f2f2f2;
             <div aria-live="polite" aria-atomic="true" class="bg-primary position-relative bd-example-toasts rounded-3 ">
                 <div class="toast-container p-3" id="toastPlacement_{{ forloop.counter }}">
                     <div class="toast">
-                        <div class="toast-header">
+                        <div class="toast-header ">
                             <strong class="me-auto">CMS</strong>
                         </div>
                         <div class="toast-body">
-                            {{ message }}
+                            
+                            {{ message|safe }}
                         </div>
                     </div>
                 </div>

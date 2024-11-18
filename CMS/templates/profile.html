@@ -266,7 +266,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
       </div>
       <div class="modal-body" style="overflow-x:hidden;">
-        <form enctype="multipart/form-data" action='/add_conference/' method='POST' >
+        <form   enctype="multipart/form-data" action='/add_conference/' method='POST' >
         {% csrf_token %}
         <div class="row" style="margin-top:10px;">
           <div class="form-floating" style=" text-align:center; margin-left:20px;">
@@ -431,6 +431,63 @@
 
 {% block additional-script %}
     <script>
+
+{% comment %} function to maintain the order of deadlines {% endcomment %}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const submissionDeadline = document.getElementById('floatingInput5');
+  const notificationOfAcceptance = document.getElementById('floatingInput6');
+  const registrationDeadline = document.getElementById('floatingInput7');
+  const cameraReadyPapers = document.getElementById('floatingInput8');
+  const conferenceDate = document.getElementById('floatingInput9');
+
+  // Event listener for Submission Deadline
+  submissionDeadline.addEventListener('change', function () {
+    const submissionDate = submissionDeadline.value;
+    if (submissionDate) {
+      notificationOfAcceptance.min = submissionDate;
+      registrationDeadline.min = submissionDate;
+      cameraReadyPapers.min = submissionDate;
+      conferenceDate.min = submissionDate;
+    }
+  });
+
+  // Event listener for Notification of Acceptance
+  notificationOfAcceptance.addEventListener('change', function () {
+    const acceptanceDate = notificationOfAcceptance.value;
+    if (acceptanceDate) {
+      registrationDeadline.min = acceptanceDate;
+      cameraReadyPapers.min = acceptanceDate;
+      conferenceDate.min = acceptanceDate;
+    }
+  });
+
+  // Event listener for Registration Deadline
+  registrationDeadline.addEventListener('change', function () {
+    const registrationDate = registrationDeadline.value;
+    if (registrationDate) {
+      cameraReadyPapers.min = registrationDate;
+      conferenceDate.min = registrationDate;
+    }
+  });
+
+  // Event listener for Camera Ready Papers
+  cameraReadyPapers.addEventListener('change', function () {
+    const cameraReadyDate = cameraReadyPapers.value;
+    if (cameraReadyDate) {
+      conferenceDate.min = cameraReadyDate;
+    }
+  });
+});
+
+
+
+
+
+
+
+
+      
      let suggestions = [
      {% for conference in conferences %}
      "{{conference.conferenceTitle}}",
@@ -484,4 +541,9 @@ function showSuggestions(list){
 
 
 </script>
+
+
+
+   
+
 {% endblock %} 

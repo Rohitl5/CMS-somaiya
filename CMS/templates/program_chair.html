@@ -274,34 +274,55 @@ th, td {
                    <center>
                  </div>
               {% else %}
+
+              <div style="max-height: 400px; overflow-y: auto;">
               <table style="margin-bottom:5px;border-collapse:separate; 
               border-spacing: 0 1em;">
 
-                {% for paper in uploadedpapers %}
+              {% for track in tracks %}
+              <thead>
+                  <tr >
+                      <!-- Display Track Title -->
+                       
+                      <th style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;display:block;margin-right:10px;" >
+                        &nbsp;{{ track.title }}
+                    </th>
+                  
+                  </tr>
+              </thead> 
+              <tbody>
+
+                    {% for paper in uploadedpapers %}
+                       {% if paper.track.title == track.title %}
+              
+                
+                
                 <tr>
-                  {% comment %} to delete the paper {% endcomment %}
+                  <th class="title-column">&nbsp;&nbsp;{{paper.papertitle}}</th>
+{% comment %} to delete the paper {% endcomment %}
+           
                   <th>
-                    <button class="btn btn-primary" style="border-radius:50%" type="button" onclick="confirmDelete(event, '{{paper.id}}')">
+                    <button class="btn btn-danger" style="border-radius:50%" type="button" onclick="confirmDelete(event, '{{paper.id}}')">
                         <a class="text-light fas fa-trash" href="delete/{{paper.id}}" target="blank" style="text-decoration: none;"></a>
                     </button>
                 </th>
 
-                  <th class="title-column">&nbsp;&nbsp;{{paper.papertitle}}</th>
+          
 {% comment %} the pdf view {% endcomment %}
                   <th>
-                  <button class="btn btn-primary" style="border-radius:50%" type="button" >
+                  <button class="btn btn-dark" style="border-radius:50%" type="button" >
                     <a class="  text-light fas fa-file" href="{{paper.id}}" target="blank"></a>
                   </button>
                   </th>
 
 
                   <th>
-                  <button class="btn btn-primary" style="border-radius:50%" type="button"  data-bs-toggle="modal" data-bs-target="#viewpaperdata{{paper.id}}">
+                  <button class="btn btn-info" style="border-radius:50%" type="button"  data-bs-toggle="modal" data-bs-target="#viewpaperdata{{paper.id}}">
                     <i class="fas fa-info" ></i>
                   </button>
                   
                   <div class="modal fade" id="viewpaperdata{{paper.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                     <div class="modal-dialog modal-dialog-centered">
+                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                        <div class="modal-content">
                          <div class="modal-header">
                            <h1 class="modal-title fs-5" id="exampleModalLabel">Paper Information</h1>
@@ -319,8 +340,13 @@ th, td {
                               <th>Author</th>
                               <td>
                                {{paper.authors.user.first_name}} {{paper.authors.user.last_name}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Other Authors</th>
+                              <td>
                                 {% if paper.otherauthors %}
-                                  , {{ paper.otherauthors }}
+                                   {{ paper.otherauthors }}
                                 {% endif %}
                               </td>
                             </tr>
@@ -507,6 +533,7 @@ th, td {
                         
                         {% endif %}
                          </table>
+                        </div>
                          </div>
                         
                         <div class="modal-footer">
@@ -543,18 +570,21 @@ th, td {
               </div>
             </div>
             </div> 
-                    
-                  
+                 
+                {% endif%}
+                {% endfor%} 
+          </tbody> 
                 {% endfor %}
                 {% endif %}
               </table>
+            </div>
             </div>  
             <div id="Peoples" class="tabcontent" style="width:390px;" >
               <div class="aboutconference" style="background-color:white;">
                 <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;display:block;margin-right:10px;">
                     &nbsp;Authors
                 </a>
-                <div class="text" style="margin:15px;">
+                <div class="text" style="margin:15px;max-height: 180px; overflow-y: auto;">
                     <table class="table">
                         <thead>
                             <tr>
@@ -582,7 +612,7 @@ th, td {
                     {% comment %} -------------------------------------------------------------------------------------------------- {% endcomment %}
                     {% for author in authors %}
                     <div class="modal fade" id="viewauthordata{{ author.user.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h1 class="modal-title fs-5" id="exampleModalLabel">About Author</h1>
@@ -659,7 +689,7 @@ th, td {
 
                  <div class="about-institute"  style="background-color:white;">
                   <a style="min-height:60px;text-align: left;font-size: 20px;border-left: 5px solid red;font-weight:bold;font-size:30px;color:red;margin-top:5px;display:block;margin-right:10px;">&nbsp;Reviewers</a>
-                      <div class="text" style="margin:15px;">
+                      <div class="text" style="margin:15px;max-height: 180px; overflow-y: auto;">
                         <table class="table">
                           <thead>
                             <tr>
@@ -687,7 +717,7 @@ th, td {
                     {% comment %} -------------------------------------------------------------------------------------------------- {% endcomment %}
                     {% for reviewers in reviewers %}
                     <div class="modal fade" id="viewreviewerdata{{reviewers.user.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">About Reviewer</h5>
@@ -920,5 +950,12 @@ const chBoxes =
         }
     }
       </script>
+
+  
+
+      
+
+
+  
 {% endblock additional-script %}
 

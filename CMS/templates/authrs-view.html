@@ -204,10 +204,25 @@
                   <label for="floatingInput">Key Words</label>
                 </div>
             
-                <div class="form-floating mb-3">
+                {% comment %} <div class="form-floating mb-3">
                   <input type="text" class="form-control" id="floatingInput" name="other-authors" placeholder="name@example.com" >
                   <label for="floatingInput">Other Authors(If any)</label>
+                </div> {% endcomment %}
+
+                <div class="form-floating mb-3">
+                  <input type="email" class="form-control" id="authorInput" placeholder="Enter author email">
+                  <label for="authorInput">Other Authors' Emails (If any)</label>
+                  <button type="button" class="btn btn-primary mt-2" id="addAuthorBtn">Add Author</button>
                 </div>
+                
+                <div id="authorsList" class="mb-3">
+                  <!-- Dynamic list of authors will appear here -->
+                </div>
+                
+                <input type="hidden" name="other-authors" id="otherAuthorsInput">
+
+
+
             
             
                 <div class="row" style="margin-top: 50px; margin-bottom: 20px;display: flex;flex-direction: row; ">
@@ -456,5 +471,58 @@
     </div> 
     
  
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+  const addAuthorBtn = document.getElementById("addAuthorBtn");
+  const authorsList = document.getElementById("authorsList");
+  const otherAuthorsInput = document.getElementById("otherAuthorsInput");
+  let authors = [];
+
+  addAuthorBtn.addEventListener("click", function() {
+    const authorInput = document.getElementById("authorInput");
+    const authorName = authorInput.value.trim();
+
+    if (authorName && authors.length < 8) {
+      authors.push(authorName);
+      
+      // Create a list item for the author
+      const listItem = document.createElement("div");
+      listItem.className = "author-item d-flex justify-content-between align-items-center mb-2";
+      listItem.textContent = authorName;
+
+      // Add a remove button to the list item
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "btn btn-danger btn-sm";
+      removeBtn.textContent = "Remove";
+      removeBtn.addEventListener("click", function() {
+        authorsList.removeChild(listItem);
+        authors = authors.filter(author => author !== authorName);
+        updateAuthorsInput();
+      });
+
+      listItem.appendChild(removeBtn);
+      authorsList.appendChild(listItem);
+
+      // Update the hidden input value
+      updateAuthorsInput();
+
+      // Clear the input field
+      authorInput.value = "";
+    }
+  });
+
+  function updateAuthorsInput() {
+    otherAuthorsInput.value = authors.join(",");
+  }
+});
+
+
+
+</script>
+
+
+
 {% endblock content %}
 

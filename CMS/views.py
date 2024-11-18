@@ -108,14 +108,21 @@ def logout_view(request):
 def programChair(request,conference_id):
     conference = get_object_or_404(Conference, id=conference_id)
     authors= Author.objects.filter(conferences=conference)
-    papers=Paper.objects.filter(conference=conference)
+    papers=Paper.objects.filter(conference=conference)  
+    # for paper in papers:
+    #  if paper.otherauthors:
+    #     other_authors_list = paper.otherauthors.split(',')  # Split by commas 
+    #  else : other_authors_list =""
+    tracks = Track.objects.filter(conference=conference) 
+
     reviewers = Reviewer.objects.filter(conference=conference)
     reviews= Review.objects.all()
     
     if not conference.is_chair(request.user):
         return HttpResponseForbidden('You are not authorized.')
     else:
-        return render(request, 'program_chair.html',context={"conference":conference,"authors":authors,"uploadedpapers":papers,"reviewers":reviewers,"reviews":reviews})
+        return render(request, 'program_chair.html',context={"conference":conference,"authors":authors,"uploadedpapers":papers,"reviewers":reviewers,"reviews":reviews,"tracks":tracks})
+
 
 def conferences(request,conference_id):
      
@@ -396,25 +403,51 @@ def assign_reviewer(request, paper_id, conference_id):
 
         if reviewer_ids:
             reviewers = Reviewer.objects.filter(id__in=reviewer_ids)
-            paper.reviewers.set(reviewers)
-            paper.status = "under_review"
-            paper.save()
 
-            assigned_reviewers = paper.reviewers.all()
-            print(f"Assigned reviewers for paper '{paper.papertitle}': {assigned_reviewers}")
+             # Get the main author's email
+            main_author_email = paper.authors.user.email
 
+            # Get the list of other authors' emails
+            other_authors_list = []
+            if paper.otherauthors:
+                other_authors_list = [email.strip() for email in paper.otherauthors.split(',')]
 
-            # Notify each reviewer
+            # Check if any of the selected reviewers are also authors
+            conflicting_reviewers = []
             for reviewer in reviewers:
-                subject = 'Request to review paper.'
-                message = f'Respected {reviewer.user.first_name} {reviewer.user.last_name},'\
-                          f'\nYou have a new paper to be reviewed.\n\nThank you'
-                email_from = settings.EMAIL_HOST_USER
-                recipient_list = [reviewer.user.email]
-                send_mail(subject, message, email_from, recipient_list)
+                if reviewer.user.email == main_author_email or reviewer.user.email in other_authors_list:
+                    conflicting_reviewers.append(f"{reviewer.user.first_name} {reviewer.user.last_name} ({reviewer.user.email})")
 
-            messages.info(request, "Paper assigned to the reviewers successfully, and notifying emails have been sent.")
-            return redirect('/conference/' + str(conference.id) + '/programChair/') 
+            if conflicting_reviewers:
+                    # Add a warning message with the conflicting reviewers
+                    conflict_message = (
+                                    "The following selected reviewers are also authors or other authors:<br>"
+                                    + "<br>".join([f"<span style='color: red;'>{reviewer}</span>" for reviewer in conflicting_reviewers])
+)
+                    messages.warning(request, conflict_message)
+            else:
+                    # If no conflicts, assign reviewers and update paper status
+                    paper.reviewers.set(reviewers)
+                    paper.status = "under_review"
+                    paper.save()
+
+                    assigned_reviewers = paper.reviewers.all()
+                    print(f"Assigned reviewers for paper '{paper.papertitle}': {assigned_reviewers}")
+
+
+                    # Notify each reviewer
+                    for reviewer in reviewers:
+                        subject = 'Request to review paper.'
+                        message = f'Respected {reviewer.user.first_name} {reviewer.user.last_name},'\
+                                f'\nYou have a new paper to be reviewed.\n\nThank you'
+                        email_from = settings.EMAIL_HOST_USER
+                        recipient_list = [reviewer.user.email]
+                        send_mail(subject, message, email_from, recipient_list)
+
+                    messages.info(request, "Paper assigned to the reviewers successfully, and notifying emails have been sent.")
+                    return redirect('/conference/' + str(conference.id) + '/programChair/') 
+            
+            return redirect('/conference/' + str(conference.id) + '/programChair/')
         else:
             return HttpResponseForbidden("Invalid reviewer selection.")
     
@@ -698,7 +731,9 @@ def author(request,conference_id):
        keywords= request.POST['keywords']
        submissionDate= timezone.now().date() 
        otherauthors=request.POST['other-authors']
- 
+
+
+       print(otherauthors) 
        if otherauthors=='none':
            otherauthors=None
        
@@ -790,7 +825,8 @@ def reviewer(request,conference_id):
 @login_required
 def submitreview(request,conference_id,paper_id):
     paper=Paper.objects.get(id=paper_id) 
-    reviewer=Reviewer.objects.get(user=request.user )
+    conference = get_object_or_404(Conference, id=conference_id)
+    reviewer=Reviewer.objects.get(user=request.user , conference =conference)
     relevance = request.POST["relevance"]
     writingStyle = request.POST["writingstyle"]
     reviewerConfidence = request.POST["resultanalysis"]
