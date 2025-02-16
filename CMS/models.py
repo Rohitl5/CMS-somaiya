@@ -118,12 +118,6 @@ class Author(models.Model):
     def __str__(self):
         return self.user.email
 
-class registered_authors(models.Model):
-    author = models.ForeignKey(Author,on_delete=models.CASCADE)
-    conference=models.ForeignKey(Conference,on_delete=models.CASCADE)
-
-    def __str__(self) :
-        return f" {self.author.user.email} registered for {self.conference.conferenceTitle}"
 
 class Reviewer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -170,6 +164,15 @@ class Paper(models.Model):
         submitted_reviews_count = Review.objects.filter(paper=self).count()
 
         return assigned_reviewers_count == submitted_reviews_count
+    
+class registered_authors(models.Model):
+    author = models.ForeignKey(Author,on_delete=models.CASCADE)
+    conference=models.ForeignKey(Conference,on_delete=models.CASCADE)
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, null=False, blank=False, default=6)  # Temporary default
+
+    def __str__(self) :
+        return f"{self.paper.papertitle} written by {self.author.user.email} registered for {self.conference.conferenceTitle}"
+
     
 class Review(models.Model):
     RESULT_CHOICES = [

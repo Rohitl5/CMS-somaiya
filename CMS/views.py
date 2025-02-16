@@ -15,6 +15,14 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
 
+from django.http import JsonResponse
+
+
+
+global specific_email
+specific_email ="rohit15@somaiya.edu"
+
+
 
 user=get_user_model()
 def index(request):
@@ -83,16 +91,15 @@ def login_view(request):
 
 @login_required
 def profile(request):
-    conferences = Conference.objects.values()
-    enrolled_as_programChair=Conference.objects.filter(programChair=request.user).values()
-    enrolled_as_author= Conference.objects.filter(author__user=request.user)
-    enrolled_as_reviewer= Conference.objects.filter(reviewer__user=request.user)
+    conferences = Conference.objects.order_by('-conference_date')
+    enrolled_as_programChair = Conference.objects.filter(programChair=request.user).order_by('-conference_date').values()
+    enrolled_as_author = Conference.objects.filter(author__user=request.user).order_by('-conference_date')
+    enrolled_as_reviewer = Conference.objects.filter(reviewer__user=request.user).order_by('-conference_date')
+
     permission =0
     if request.user.is_authenticated:
         euser = user.objects.filter(id=request.user.id).values('id', 'email').first()
-        if euser:
-            specific_email = "rohit15@somaiya.edu"  # replace with the specific email you want to have the permission to create conference
-            if euser['email'] == specific_email:
+        if euser['email'] == specific_email:
                 permission=1;
     
     return render(request, 'profile.html',context={"conferences":conferences,"enrolled_as_programChair":enrolled_as_programChair,"enrolled_as_author":enrolled_as_author,"enrolled_as_reviewer":enrolled_as_reviewer,"permission":permission})
@@ -274,16 +281,21 @@ def author_request(request,conference_id):
     #       conference= Conference.objects.get(id=conference_id)
 
     # the below code snippets check for if author for confernece exists 
+    
     if request.user.is_authenticated:
           try:
                     conference = Conference.objects.get(id=conference_id)
           except Conference.DoesNotExist:
                     messages.error(request, "Conference not found.")
                     return redirect('/conferences/')
+          
+
+          euser = user.objects.filter(id=request.user.id).values('id', 'email').first()
+          if euser['email'] == specific_email:
+               messages.warning(request,"ProgramChair can not apply as an Author ")
+               return redirect('/conference/'+str(conference.conferenceTitle))         
 
           author_exists = Author.objects.filter(user=request.user, conferences=conference).exists()
-
-
 
           if author_exists :
            messages.info(request,"You are already an author. ")
@@ -326,6 +338,13 @@ def reviewer_request(request,conference_id):
                     return redirect('/conferences/')
            reviewer_exists=Reviewer.objects.filter(user=request.user, conference=conference).exists()
           
+           euser = user.objects.filter(id=request.user.id).values('id', 'email').first()
+           if euser['email'] == specific_email:
+               messages.warning(request,"ProgramChair can not apply as an Reviewer ")
+               return redirect('/conference/'+str(conference.conferenceTitle))  
+
+
+
            if reviewer_exists :
             messages.info(request,"You are already a reviewer in this conference. ")
             return redirect('/conference/'+str(conference_id)+'/reviewer/')  
@@ -358,22 +377,70 @@ def add_author(request,conference_id,user_id):
 
     new_author.save()
     messages.info(request,"New author added successfully.")
-    return redirect('/conference/'+str(conference_id)+'/programChair/')  
+    return redirect('/conference/'+str(conference_id)+'/programChair/') 
+
+
+
+def request_registration(request,conference_id):
+      conference = get_object_or_404(Conference, id=conference_id)
+      if request.user.is_authenticated:
+        if request.method=="POST":
+           if timezone.localtime(timezone.now()).date() > conference.registration_deadline:
+            messages.info(request,"You can't register now as the registration deadline is over. ") 
+            return redirect('/conference/'+str(conference_id)+'/author/')
+           else : 
+            paperId =request.POST["paper_id"]
+            transationId=request.POST["transaction_id"]
+            subject = 'Request to Register in conference'
+            message = 'Respected Program Chair,\n'+str(request.user.first_name)+' '+str(request.user.last_name)+' has requested to register into  "'+str(conference.conferenceTitle)+'"\n Paper ID:' +paperId+ '\n\n Transaction ID:' +transationId+ '\nTo register the Author click on the link: http://192.168.43.114:8000/conference/'+str(conference_id)+'/register_author/'+str(request.user.id)+'/'+str(paperId)+'/\n\nThankyou'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [conference.programChair ]
+            send_mail( subject, message, email_from, recipient_list )
+            messages.info(request,"Request sent to the Program Chair.Once he/she verifies your details you will be registered in the conference automatically.")
+            return redirect('/conference/'+str(conference_id)+'/author/')
+      else:
+         return render(request,'login.html')  
+           
+          
 
 @login_required
-def register_author(request,conference_id):
-    conference= get_object_or_404(Conference,id=conference_id)
-    if timezone.localtime(timezone.now()).date() > conference.registration_deadline:
-           messages.info(request,"You can't register now as the registration deadline is over. ")  
-    else:
-           author = get_object_or_404(Author,user=request.user)
-           register=registered_authors.objects.create(
+def register_author(request,conference_id,user_id,paperId):
+        # if timezone.localtime(timezone.now()).date() > conference.registration_deadline:
+        #     messages.info(request,"You can't register now as the registration deadline is over. ") 
+        # else : 
+        #    author = get_object_or_404(Author,user=request.user)
+        #    register=registered_authors.objects.create(
+        #       author=author,
+        #       conference=conference
+        #    )
+        #    register.save()
+        #    messages.info(request,"You registered successfully.")
+        # return redirect('/conference/'+str(conference_id)+'/author/') 
+
+# the code above could be cutsomised when payment gateway will be integrated
+#  the below code is for manual qr code payment 
+
+    
+   
+
+
+
+    conference = get_object_or_404(Conference, id=conference_id)
+
+    if not conference.is_chair(request.user):
+        return HttpResponseForbidden("You are not authorized to register authors to this conference.")
+    
+    author = get_object_or_404(Author, user__id=user_id, conferences=conference)
+    paper = get_object_or_404(Paper,id=paperId, conference=conference , authors=author)
+    register=registered_authors.objects.create(
+
               author=author,
-              conference=conference
+              conference=conference,
+              paper=paper
            )
-           register.save()
-           messages.info(request,"You registered successfully.")
-    return redirect('/conference/'+str(conference_id)+'/author/')  
+    register.save()
+    messages.info(request,"Author registered successfully.")
+    return redirect('/conference/'+str(conference_id)+'/programChair/') 
 
 @login_required
 def add_reviewer(request,conference_id,user_id):
@@ -701,7 +768,11 @@ def export_data(request,conference_id,choice):
 # views for author
 @login_required
 def author(request,conference_id):
+
+    register_permission=True
     conference = get_object_or_404(Conference, id=conference_id)
+    if timezone.localtime(timezone.now()).date() > conference.submission_deadline:
+       register_permission=False 
     author=Author.objects.get(user=request.user ,conferences=conference) # added the conferences=conference (22/6/24 11:02)
     is_registered = registered_authors.objects.filter(author=author, conference=conference).exists()
 
@@ -710,6 +781,8 @@ def author(request,conference_id):
     tracks= Track.objects.filter(conference_id=conference.id).all().values()
     papers=Paper.objects.filter(authors=author).all().values()
     paper_names=Paper.objects.filter(authors=author).all().values('id')
+    register_paper = registered_authors.objects.filter(author=author, conference=conference).first()
+
     if(is_registered):
       reviews_for_submittedpapers = Review.objects.filter(paper__in=paper_names)
     else:
@@ -731,6 +804,10 @@ def author(request,conference_id):
        keywords= request.POST['keywords']
        submissionDate= timezone.now().date() 
        otherauthors=request.POST['other-authors']
+
+       if Paper.objects.filter(conference_id=conference_id, papertitle=title).exists():  # this is to cross check if title already exists
+           messages.info(request,"You can't submit as title already exists")
+           return redirect('/conference/'+str(conference_id)+'/author/')  
 
 
        print(otherauthors) 
@@ -759,10 +836,16 @@ def author(request,conference_id):
        
        return redirect('/conference/'+str(conference_id)+'/author/')
     
-    return render(request, 'authrs-view.html',context={"conference":conference,"tracks":tracks,"uploadedpapers":papers,"reviews":reviews_for_submittedpapers,"is_registered":is_registered})
+    return render(request, 'authrs-view.html',context={"conference":conference,"tracks":tracks,"uploadedpapers":papers,"reviews":reviews_for_submittedpapers,"is_registered":is_registered,"register_permission":register_permission,"register_paper":register_paper})
     # else:
     #     # The user is not an author for this conference
     #      return HttpResponseForbidden("You are not authorized as an author in this conference. To join as author select 'join as author' on the conference main page.")
+
+
+#  json response to verify if the title is similar or not 
+
+
+
 
 @login_required
 def unsubmitPaper(request,paper_id,conference_id):
@@ -910,3 +993,15 @@ def deletePaper(request, paper_id, conference_id):
     messages.info(request, "Paper deleted successfully, and notifying emails have been sent.")
     return redirect('/conference/' + str(conference.id) + '/programChair/') 
 
+
+
+#  check instantly if the title exists already 
+def check_paper_title(request):
+    if request.method == "GET":
+        title = request.GET.get("title", "").strip().lower()
+        conference_id = request.GET.get("conference_id")
+
+        if Paper.objects.filter(conference_id=conference_id, papertitle=title).exists():
+            return JsonResponse({"exists": True}, status=200)
+        
+        return JsonResponse({"exists": False}, status=200)

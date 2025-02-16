@@ -32,7 +32,9 @@ urlpatterns = [ path('', views.index, name='index'),
                 path('conference/<int:conference_id>/author/submit_paper/',views.author,name="authors-view"),
                 path('conference/<int:conference_id>/author/resubmit_paper/<int:paper_id>',views.resubmit_paper,name="authors-view"),
                 path('conference/<int:conference_id>/author/unsubmit_paper=<int:paper_id>/',views.unsubmitPaper,name="authors-view"),
-                path('conference/<int:conference_id>/author/register_author/',views.register_author,name="authors-view"),
+                path('conference/<int:conference_id>/author/request_registration/',views.request_registration,name="authors-view"),
+                path('conference/<int:conference_id>/register_author/<int:user_id>/<int:paperId>/',views.register_author,name="authors-view"),
+
                 path('conference/<int:conference_id>/author/<int:paper_id>',views.displaypdf,name="displaypdf"),
 
                 path('conference/<int:conference_id>/reviewer/<int:paper_id>',views.displaypdf,name="displaypdf"),
@@ -40,5 +42,7 @@ urlpatterns = [ path('', views.index, name='index'),
                 path('conference/<int:conference_id>/add_reviewer=<int:user_id>/',views.add_reviewer,name="reviewer-view"),
                 path('conference/<int:conference_id>/reviewer/',views.reviewer,name="reviewer-view"),
                 path('conference/<int:conference_id>/reviewer/submitreview/paper=<int:paper_id>/',views.submitreview,name="reviewer-view"),
+
+                path("check-title/", views.check_paper_title, name="check_paper_title"),# to check if title exists
                 
 ]

@@ -10,13 +10,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
     {%load static  %}
-    
+
     <title>{% block title %}KJSIT Conference Management System{% endblock %}</title>
     <!-- Add your CSS and JS files here -->
     <style>
-      
+
 
 
 body{
@@ -26,7 +27,48 @@ background-color:#f2f2f2;
 
 }
 
-@media only screen and (max-width: 430px){
+.footerrow {
+  display: flex;
+  align-items: center;
+  flex: 1 1 60%;
+  margin-top: 15px;
+  list-style: none;
+  padding: 0;
+}
+
+.footeroption {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: transparent;
+  font-size: 14px;
+  padding-left: 0px;
+  font-family: Roboto-Regular;
+  line-height: 30px;
+}
+
+@media (max-width: 768px) {
+    ul {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    li {
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width: 769px) {
+    ul {
+        flex-direction: row;
+        align-items: center;
+    }
+    li {
+        margin-right: 20px;
+    }
+
+}
+
+
+@media only screen and (max-width: 615px){
     .brand_for_laptop{
       display:none;
     }
@@ -34,7 +76,7 @@ background-color:#f2f2f2;
     body{
         width:97vw;
     }
-    
+
   }
 
 
@@ -42,41 +84,46 @@ background-color:#f2f2f2;
 {% block additional-css %}
 
 {% endblock additional-css %}
-</style>    
+</style>
 </head>
 <body >
-    <nav class="navbar fixed-top navbar-inverse " style="height:96px; background-color: #a70000; box-shadow: 0px 5px  #ff0000 ">
-           
-    
-        <div class="container">
-            {% if request.user.is_authenticated %}
-            <a href="http://127.0.0.1:8000/profile/" class="profile-link btn btn-success btn-lg shadow-lg" title="Go to Profile">
-                <i class="fas fa-user-circle fa-2x"></i>
-            </a>
-            {%else%}
-            <a href="" class="profile-link btn btn-primary btn-lg shadow-lg" title="Go to Profile">
-                    <i class="fas fa-user-circle fa-2x"></i>
-            </a>
-            {% endif %}
-
-
-
-              <a class="navbar-brand" style="font-family:Roboto; color:WHITE; font-weight:600;align-items:center; display:flex;" >
-                <img src="https://tnpportal.kjsieit.in/static/img/logo2.jpg" alt="Bootstrap" width="80" height="50" style="margin-right:15px;">
-                <div class="brand_for_laptop">Conference Management System</div>
-                
-            </a>
-
-
-
-            
-
-            {% block signup_button %}
-            {% comment %} if sigup buttn add over here {% endcomment %}
-            {% endblock signup_button %}
-            
+       <nav class="navbar fixed-top navbar-inverse" style="height:96px; background-color: #a50c22; box-shadow: 0px 5px #ed1c24; padding-left: 20px; padding-right: 20px;">
+           <div>
+                <a class="navbar-brand d-flex align-items-center" style="font-family:Roboto; color:WHITE; font-weight:600;">
+                    <img src="https://tnpportal.kjsieit.in/static/img/logo2.jpg" alt="Bootstrap" width="80" height="50" style="margin-right:10px;">
+                    <div style="display: flex; flex-direction: column; justify-content: center;">
+                        <div class="brand_for_laptop" style="text-align: left;">Conference Management System</div>
+                        <div class="brand_for_laptop" style="font-size:15px; color:white; font-weight:normal; text-align: left;">K. J. Somaiya Institute of Technology</div>
+                    </div>
+                </a>
             </div>
-        </nav>      
+            <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;height: 100%;">
+                <div style="margin-right: 20px;">
+                    {% if request.user.is_authenticated %}
+                        <a href="/profile/" class="profile-link btn btn-primary btn-lg shadow-lg" title="Go to Profile" style="padding:5px 10px; font-size:14px; display: inline-flex; align-items: center;">
+                            <i class="bi bi-person" style="color: white; font-size: 24px; margin-right: 0;"></i>
+                        </a>
+                    {% else %}
+                        {% if request.path == '/login/' %}
+                            <a href="/signup/" class="profile-link btn btn-primary btn-lg shadow-lg" title="Go to Signup" style="padding:5px 10px; font-size:14px; display: inline-flex; align-items: center;">
+                                <i class="bi bi-person-plus" style="color: white; font-size: 24px; margin-right: 0;"></i>
+                            </a>
+                        {% elif request.path == '/signup/' %}
+                            <a href="/login/" class="profile-link btn btn-primary btn-lg shadow-lg" title="Go to Login" style="padding:5px 10px; font-size:14px; display: inline-flex; align-items: center;">
+                                <i class="bi bi-person" style="color: white; font-size: 24px; margin-right: 0;"></i>
+                            </a>
+                        {% elif request.path != '/' %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div>
+                    {% block signup_button %}
+                        {% comment %} if signup button add over here {% endcomment %}
+                    {% endblock signup_button %}
+                </div>
+            </div>
+        </nav>
         {% for message in messages %}
             <div aria-live="polite" aria-atomic="true" class="bg-primary position-relative bd-example-toasts rounded-3 ">
                 <div class="toast-container p-3" id="toastPlacement_{{ forloop.counter }}">
@@ -85,7 +132,7 @@ background-color:#f2f2f2;
                             <strong class="me-auto">CMS</strong>
                         </div>
                         <div class="toast-body">
-                            
+
                             {{ message|safe }}
                         </div>
                     </div>
@@ -113,45 +160,34 @@ background-color:#f2f2f2;
         {% endblock %}
     </main>
 
-    <footer>
-        <!-- Add your footer content here -->
-        {% comment %} <p>&copy; 2023 KJSIT Conference Management System. All rights reserved.</p> {% endcomment %}
-        <div class="about-container" id="about_us" style=" background-color: rgba(231,232,233,0.3); height : 400px; width : auto ;">
-            <center>
-            <div class="about-container-main" style="padding: 75px 0px 30px 0px ; display:flex;max-width:fit-content;">
-              <div class="company-name" style="flex: 25%; font-family: 'Poppins', sans-serif; color: aliceblue;max-width:fit-content;">
-                <div class="contact" style="  padding-left: 25px;
-                padding-top: 10px;
-                color:#000;
-                max-width:fit-content;">
-                Contact-us :<br>
-                91-22-24061408<br>
-                91-22-24061403<br>
-                info.tech@somaiya.edu
-                </div>
-              </div>
-              <div class="company-details" style="flex:75%;
-              font-family: 'Poppins', sans-serif;
-              color: #000;padding: 20px;
-              letter-spacing: 1px;
-              max-width:fit-content;">
-                <img src="https://tnpportal.kjsieit.in/static/img/logo2.jpg" style="width:100px;">
-              </div>
-            </div>
-            </center>
-            <div class="line" style=" height: 1px;
-            flex: 1;
-            background-color: #ff0000;
-            margin-left: 200px;
-            margin-right: 200px;">
-            </div>
-            <center>
-                <p style="padding-top: 20px;letter-spacing: 1px;">
-                &copy; 2023 KJSIT Conference Management System. All rights reserved.
-                </p>
-            </center>
-          </div> 
-    </footer>
+   <nav class="navbar navbar-inverse" style="background-color: #162343d9 !important; padding: 0; margin: 0; width: 100vw;">
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; gap: 20px; align-items: center; flex-wrap: nowrap; padding: 20px 20px;">
+            <li style="padding-left: 20px; padding-right: 10px;">
+                <a href="https://kjsit.somaiya.edu.in/en" aria-label="KJSIT">
+                    <img src="https://kjsit.somaiya.edu.in/assets/kjsieit/images/Logo/kjsieit-logo.svg" style="width: 60vw; max-width: 250px; height: auto; filter: invert(100%);">
+                </a>
+            </li>
+            <li class="footerrow">
+                <a class="footeroption" href="https://www.somaiya.edu.in/en/about" aria-label="About">About</a>
+            </li>
+            <li class="footerrow">
+                <a class="footeroption" href="https://www.somaiya.edu.in/en/about/timeline" aria-label="Timeline">Timeline</a>
+            </li>
+            <li class="footerrow">
+                <a class="footeroption" href="https://kjsit.somaiya.edu.in/en/contact-us" aria-label="Contact">Contact</a>
+            </li>
+            <li class="footerrow">
+                <a class="footeroption" style="white-space: nowrap;" href="https://www.somaiya.edu.in/en/terms-and-conditions" aria-label="Terms">Terms &amp; Conditions</a>
+            </li>
+        </ul>
+        <hr style="width: 100%; margin-top: 7px; margin-left: 15px; margin-right: 15px; margin-bottom: 8px; opacity: .3; position: relative; float: left; display: block; border-top: 1px solid #656262; box-sizing: content-box; height: 0; margin-block-start: 0.5em; margin-block-end: 0.5em; font-size: 14px; line-height: 1.42857143; color: #333;">
+        <div style="text-align: center; width: 100%; padding-bottom: 5px">
+            <p>
+                <a style="pointer-events: none; cursor: default; text-decoration: none; font-family: FrutigerLTStd-Light !important; text-transform: capitalize !important; color: #adadad !important; font-size: 14px; line-height: 1.42857143;">&copy; 2023-25 KJSIT Conference Management System. All rights reserved.</a>
+            </p>
+        </div>
+    </nav>
+
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         var toastElList = [].slice.call(document.querySelectorAll('.toast'))
@@ -165,6 +201,6 @@ background-color:#f2f2f2;
     </script>
     {% block additional-script %}
     {% endblock additional-script %}
-   
+
 </body>
 </html>

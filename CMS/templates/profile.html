@@ -266,7 +266,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
       </div>
       <div class="modal-body" style="overflow-x:hidden;">
-        <form   enctype="multipart/form-data" action='/add_conference/' method='POST' >
+        <form  id='createForm' enctype="multipart/form-data" action='/add_conference/' method='POST' >
         {% csrf_token %}
         <div class="row" style="margin-top:10px;">
           <div class="form-floating" style=" text-align:center; margin-left:20px;">
@@ -354,7 +354,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  onclick="document.getElementById('createForm').reset()">Close</button>
         <button type="submit" class="btn btn-primary">Create</button>
       </div>
     </form>
@@ -367,9 +367,43 @@
 <h3>Not enrolled in any conference</h3>
 </center>
 {% else %}
-<div class="ag-conference_box">
+
+
+<div style="  display: flex; justify-content: center; align-items: center; ">
+<div class="tab" style=" margin-top: 30px;  background-color: white; max-width: fit-content; height: max-content;  padding: 10px; display: flex ;flex-direction: column; align-items: center;  justify-content: center;  ">
+<ul class="nav flex-row" style=" align-items: center;  justify-content: center; ">
+  {% if permission == 1 %}
+  <li class="nav-item">
+    <button class="tablinks" onclick="openInfo(event,'programchair') " id="defaultOpen" style="width:250px;height:60px;border:none;background-color:white;text-align: left;font-size: 20px;border-left: 5px solid red; border-top: 5px solid rgba(231,232,233,0.5);font-weight:bold;color:#494F55;">
+      <i class="fas fa-pager"></i>  
+      &nbsp;Program Chair
+    </button>
+  </li>
+  {% endif %}
+  <li class="nav-item">
+    <button class="tablinks" onclick="openInfo(event,'authors') " id="defaultOpen" style="width:250px;height:60px;border:none;background-color:white;text-align: left;font-size: 20px;border-left: 5px solid red; border-top: 5px solid rgba(231,232,233,0.5);font-weight:bold;color:#494F55;">
+      <i class="fas fa-pager"></i>  
+      &nbsp;Authors
+    </button>
+  </li>
+  <li class="nav-item">
+    <button class="tablinks" onclick="openInfo(event, 'reviewers')" style="width:250px;height:60px;border:none;background-color:white;text-align: left;font-size: 20px;border-left: 5px solid red; border-top: 5px solid rgba(231,232,233,0.5);font-weight:bold;color:#494F55;">
+      <i class="fas fa-people-group"></i>  
+      &nbsp;Reviewers
+    </button>
+  </li>
+</ul>
+</div>
+</div>
+
+
+
+<div class="ag-conference_box ">
+
+<div id="programchair" class=" ag-conference_item tabcontent "> 
 {% for conference in enrolled_as_programChair %}
-<div class="ag-conference_item">
+
+<div class="ag-conference_item" >
   <a href="/conference/{{conference.id}}/programChair/" class="ag-conference-item_link">
     <div class="ag-conference-item_bg"></div>
 
@@ -385,10 +419,14 @@
     </div>
   </a>
 </div>
-{% endfor %}
 
+{% endfor %}
+</div>
+
+
+<div id ="authors" class="ag-conference_item tabcontent ">
 {% for conference in enrolled_as_author %}
-<div class="ag-conference_item">
+<div class="ag-conference_item ">
   <a href="/conference/{{conference.id}}/author/" class="ag-conference-item_link">
     <div class="ag-conference-item_bg"></div>
 
@@ -405,9 +443,11 @@
   </a>
 </div>
 {% endfor %}
+</div>
 
+<div id ="reviewers" class="ag-conference_item tabcontent">
 {% for conference in enrolled_as_reviewer %}
-<div class="ag-conference_item">
+<div  class="ag-conference_item ">
   <a href="/conference/{{conference.id}}/reviewer/" class="ag-conference-item_link">
     <div class="ag-conference-item_bg"></div>
 
@@ -424,6 +464,7 @@
   </a>
 </div>
 {% endfor %}
+</div>
 
 </div>
 {%endif%}
@@ -537,6 +578,28 @@ function showSuggestions(list){
     }
     resultBox.innerHTML = listData;
 }
+
+
+// this is the function for the specified view 
+function openInfo(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+    tablinks[i].style.backgroundColor="white"
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+  evt.currentTarget.style.backgroundColor="#ffcbd1";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+
 
 
 

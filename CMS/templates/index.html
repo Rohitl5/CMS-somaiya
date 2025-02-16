@@ -5,22 +5,22 @@
 {% block title %}Home - KJSIT Conference Management System{% endblock %}
 {% block signup_button %}
 <div class="signup-button">
-  {% if request.user.is_authenticated %}
-  <a class="btn btn-primary btn-lg shadow-lg" href="/logout/" style="margin-right:12px;" role="button">
-    Logout 
-  </a>
-  {% else%}
-  <a class="btn btn-primary btn-lg shadow-lg" href="/signup/" style="margin-right:12px;" role="button">
-    Signup 
-  </a>
-  {% endif %}
+  <!--{% if request.user.is_authenticated %}-->
+  <!--<a class="btn btn-primary btn-lg shadow-lg" href="/logout/" style="margin-right:12px; padding:5px 10px; font-size:14px; display: inline-flex; align-items: center" role="button">-->
+  <!--  <i class="bi bi-box-arrow-right" style="color: white; font-size: 24px; margin-right: 0;"></i>-->
+  <!--</a>-->
+  <!--{% else%}-->
+  <!--<a class="btn btn-primary btn-lg shadow-lg" href="/signup/" style="margin-right:12px; padding:5px 10px; font-size:14px; display: inline-flex; align-items: center" role="button">-->
+  <!--  <i class="bi bi-person-plus" style="color: white; font-size: 24px; margin-right: 0;"></i>-->
+  <!--</a>-->
+  <!--{% endif %}-->
 </div>
 {% endblock %}
 {% block additional-css %}
 
 .search_container{
   min-width: 550px;
-  
+
 }
 
 
@@ -101,7 +101,7 @@
   .text-box{
     text-align:center;
   }
- 
+
 }
 
 @media only screen and (max-width: 770px) {
@@ -122,168 +122,172 @@
               <div class="searchInput shadow-lg">
                 <input type="text" placeholder="Search " >
               <div class="resultBox" >
-                
+
               </div>
               <div class="icon" ><i class="fas fa-search"></i></div>
               </div>
             </div>
 
-            {% comment %} create button only principal sir can access {% endcomment %}
-            
-            {% comment %} <div class="create-button" style="margin-left:15px;">
-              <button class="btn" style="min-height:70px;min-width:150px;border-radius:50px;background-color: DodgerBlue;
-                color: white;
-                font-size: 25px; 
-                cursor: pointer;
-               " type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
-               <span data-bs-toggle="modal" data-bs-target="#myModal" >
-               <i class="fa fa-plus-circle"></i> 
-                Create
-               </span>
-              </button>
-            </div>   {% endcomment %}
+            <!-- ### here is the create event button but for the time we want only principal sir email can create conference ###-->
 
-            {% comment %} <div class="modal fade dark-modal" id="myModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                  <div class="modal-content">
-                    <div class="modal-header" style="background-color:#a70000;color:#fff;">
-                      <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Conference Details</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>
-                    </div>
-                    <div class="modal-body" style="overflow-x:hidden;">
-                      <form enctype="multipart/form-data"  action='/add_conference/' method='POST'>
-                      {% csrf_token %}
-                      <div class="row" style="margin-top:10px;">
-                        <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                          <input type="text" name="title" class="form-control" id="floatingInput1" placeholder="Firstname" style="width: 95%" required>
-                          <label for="floatingInput1" style="margin-left: 10px;">Title</label>                            
-                        </div>
-                      </div>
-                      <div class="row" style="margin-top:10px;">
-                        <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                          <input type="text" name="institute" class="form-control" id="floatingInput2" placeholder="Firstname" style="width: 95%" required>
-                          <label for="floatingInput2" style="margin-left: 10px;">Organizing Institute</label>                            
-                        </div>
-                      </div>
-                      <div class="row" style="margin-top:10px;">
-                        <div class="col">
-                          <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                            <textarea type="text" name="aboutInstitute" class="form-control" id="floatingInput3" placeholder="Firstname" style="min-height: 130px; width: 95%;" ></textarea>
-                            <label for="floatingInput3">About Institute</label>                            
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                            <textarea type="text" name="aboutConference" class="form-control" id="floatingInput4" placeholder="Firstname" style="min-height: 130px; width: 95%;" ></textarea>
-                            <label for="floatingInput4">About Conference</label>                            
-                          </div>
-                        </div>
-                      </div>
-                      <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Important Dates</label></strong>
-                     
-                      <div class="row" style="margin-top:10px;">
-                        <div class="col">
-                          <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                            <input type="date" name="submissionDeadline" class="form-control" id="floatingInput5" placeholder="Firstname" style="width: fit-content;" required>
-                            <label for="floatingInput5">Submission Deadline</label>                            
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                            <input type="date" name="notificationOfAcceptance" class="form-control" id="floatingInput6" placeholder="Firstname" style="width: fit-content;" required>
-                            <label for="floatingInput6">Notification of Acceptance</label>                            
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                            <input type="date" name="registrationDeadline" class="form-control" id="floatingInput7" placeholder="Firstname" style="width: fit-content;" required>
-                            <label for="floatingInput7">Registration Deadline</label>                            
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row" style="margin-top:10px;">
-                        <div class="col-auto">
-                          <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                          <input type="date" name="cameraReadyPapers" class="form-control" id="floatingInput8" placeholder="Firstname" style="width: fit-content;" required>
-                          <label for="floatingInput8">Camera Ready Papers</label>                            
-                        </div>
-                        </div>
-                        <div class="col-auto">
-                          <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                          <input type="date" name="conferenceDate" class="form-control" id="floatingInput9" placeholder="Firstname" style="width: fit-content;" required>
-                          <label for="floatingInput9">Conference Date</label>                            
-                        </div>
-                        </div>
-                      </div>
-                      <div class="row" style="margin-top: 20px;">
-                        <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                          <input type="text" name="venue" class="form-control" id="floatingInput10" placeholder="Firstname" style="width: 95%;" >
-                          <label for="floatingInput10" style="margin-left: 10px;">Conference Venue</label>                            
-                        </div>
-                      </div>
-                      
-                      <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Committees</label></strong>
-                      <center><label style="margin-bottom: 5px;">Add images containing details of various committees</label></center>
-                      <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
-                        <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                          <input type="file" name="committeeImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >
-                          <label for="floatingInput17" style="margin-left: 10px;">Committee details</label>                            
-                        </div>
-                      </div>
-                      <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Images</label></strong>
-                      <div class="row" style="margin-top: 50px; margin-bottom: 20px;">
-                        <div class="form-floating" style=" text-align:center; margin-left:20px;">
-                          <input type="file" name="conferenceImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple>
-                          <label for="floatingInput17" style="margin-left: 10px;">Images related to Conference and Institute</label>                            
-                        </div>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary">Create</button>
-                    </div>
-                  </form>
-                  </div>
-                </div>
-            </div> {% endcomment %}
-        </div>
+            <!--<div class="create-button" style="margin-left:15px;">-->
+            <!--  <button class="btn" style="min-height:70px;min-width:150px;border-radius:50px;background-color: DodgerBlue;-->
+            <!--    color: white;-->
+            <!--    font-size: 25px; -->
+            <!--    cursor: pointer;-->
+            <!--   " type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">-->
+            <!--   <span data-bs-toggle="modal" data-bs-target="#myModal" >-->
+            <!--   <i class="fa fa-plus-circle"></i> -->
+            <!--    Create-->
+            <!--   </span>-->
+            <!--  </button>-->
+            <!--</div>    -->
+
+        <!--    <div class="modal fade dark-modal" id="myModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+        <!--        <div class="modal-dialog modal-lg modal-dialog-scrollable">-->
+        <!--          <div class="modal-content">-->
+        <!--            <div class="modal-header" style="background-color:#a70000;color:#fff;">-->
+        <!--              <h5 class="modal-title" style="margin-left:10px;" id="exampleModalLabel">Conference Details</h5>-->
+        <!--              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cl"></button>-->
+        <!--            </div>-->
+        <!--            <div class="modal-body" style="overflow-x:hidden;">-->
+        <!--              <form enctype="multipart/form-data"  action='/add_conference/' method='POST'>-->
+        <!--              {% csrf_token %}-->
+        <!--              <div class="row" style="margin-top:10px;">-->
+        <!--                <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                  <input type="text" name="title" class="form-control" id="floatingInput1" placeholder="Firstname" style="width: 95%" required>-->
+        <!--                  <label for="floatingInput1" style="margin-left: 10px;">Title</label>                            -->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--              <div class="row" style="margin-top:10px;">-->
+        <!--                <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                  <input type="text" name="institute" class="form-control" id="floatingInput2" placeholder="Firstname" style="width: 95%" required>-->
+        <!--                  <label for="floatingInput2" style="margin-left: 10px;">Organizing Institute</label>                            -->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--              <div class="row" style="margin-top:10px;">-->
+        <!--                <div class="col">-->
+        <!--                  <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                    <textarea type="text" name="aboutInstitute" class="form-control" id="floatingInput3" placeholder="Firstname" style="min-height: 130px; width: 95%;" ></textarea>-->
+        <!--                    <label for="floatingInput3">About Institute</label>                            -->
+        <!--                  </div>-->
+        <!--                </div>-->
+        <!--                <div class="col">-->
+        <!--                  <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                    <textarea type="text" name="aboutConference" class="form-control" id="floatingInput4" placeholder="Firstname" style="min-height: 130px; width: 95%;" ></textarea>-->
+        <!--                    <label for="floatingInput4">About Conference</label>                            -->
+        <!--                  </div>-->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--              <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Important Dates</label></strong>-->
+
+        <!--              <div class="row" style="margin-top:10px;">-->
+        <!--                <div class="col">-->
+        <!--                  <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                    <input type="date" name="submissionDeadline" class="form-control" id="floatingInput5" placeholder="Firstname" style="width: fit-content;" required>-->
+        <!--                    <label for="floatingInput5">Submission Deadline</label>                            -->
+        <!--                  </div>-->
+        <!--                </div>-->
+        <!--                <div class="col">-->
+        <!--                  <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                    <input type="date" name="notificationOfAcceptance" class="form-control" id="floatingInput6" placeholder="Firstname" style="width: fit-content;" required>-->
+        <!--                    <label for="floatingInput6">Notification of Acceptance</label>                            -->
+        <!--                  </div>-->
+        <!--                </div>-->
+        <!--                <div class="col">-->
+        <!--                  <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                    <input type="date" name="registrationDeadline" class="form-control" id="floatingInput7" placeholder="Firstname" style="width: fit-content;" required>-->
+        <!--                    <label for="floatingInput7">Registration Deadline</label>                            -->
+        <!--                  </div>-->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--              <div class="row" style="margin-top:10px;">-->
+        <!--                <div class="col-auto">-->
+        <!--                  <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                  <input type="date" name="cameraReadyPapers" class="form-control" id="floatingInput8" placeholder="Firstname" style="width: fit-content;" required>-->
+        <!--                  <label for="floatingInput8">Camera Ready Papers</label>                            -->
+        <!--                </div>-->
+        <!--                </div>-->
+        <!--                <div class="col-auto">-->
+        <!--                  <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                  <input type="date" name="conferenceDate" class="form-control" id="floatingInput9" placeholder="Firstname" style="width: fit-content;" required>-->
+        <!--                  <label for="floatingInput9">Conference Date</label>                            -->
+        <!--                </div>-->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--              <div class="row" style="margin-top: 20px;">-->
+        <!--                <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                  <input type="text" name="venue" class="form-control" id="floatingInput10" placeholder="Firstname" style="width: 95%;" >-->
+        <!--                  <label for="floatingInput10" style="margin-left: 10px;">Conference Venue</label>                            -->
+        <!--                </div>-->
+        <!--              </div>-->
+
+        <!--              <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Committees</label></strong>-->
+        <!--              <center><label style="margin-bottom: 5px;">Add images containing details of various committees</label></center>-->
+        <!--              <div class="row" style="margin-top: 50px; margin-bottom: 20px;">-->
+        <!--                <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                  <input type="file" name="committeeImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple >-->
+        <!--                  <label for="floatingInput17" style="margin-left: 10px;">Committee details</label>                            -->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--              <strong><label style="margin-bottom: 0%; margin-top: 50px;margin-left:20px;color:DodgerBlue;">Images</label></strong>-->
+        <!--              <div class="row" style="margin-top: 50px; margin-bottom: 20px;">-->
+        <!--                <div class="form-floating" style=" text-align:center; margin-left:20px;">-->
+        <!--                  <input type="file" name="conferenceImages" class="form-control" id="floatingInput17" placeholder="Firstname" style="width: 95%" multiple>-->
+        <!--                  <label for="floatingInput17" style="margin-left: 10px;">Images related to Conference and Institute</label>                            -->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--            <div class="modal-footer">-->
+        <!--              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+        <!--              <button type="submit" class="btn btn-primary">Create</button>-->
+        <!--            </div>-->
+        <!--          </form>-->
+        <!--          </div>-->
+        <!--        </div>-->
+        <!--    </div>-->
+        <!--</div>-->
+
     </div>
   </center>
-  
+
+
   <center>
-    <div class="intro-text" style="font-weight:100;margin:50px;">
+    <div class="intro-text" style="font-weight:100; margin-top:15px; margin-bottom:50px;">
           <a style="font-size:40px;">Create,Manage And Contribute To Conferences</a><br>
-          <a style="font-size:35px;">Easily And Efficiently</a>
-    </div> 
-  </center>     
-    <div class="aboutus" id="about-1" style="width:auto;margin: auto; height:400px;display:flex;">
-        <div class="image-box" style="flex:50%; background-color:gray;margin:50px;">
-          
+          <a style="font-size:35px; ">Easily And Efficiently</a>
+    </div>
+    <a href="/signup/" style="font-size: 20px; padding: 8px 23px; background-color: #4285F4; color: white; text-decoration: none; border-radius: 40px;">Sign Up
+    </a>
+  </center>
+
+    <div class="aboutus" id="about-1" style="width:auto; margin: auto; height:400px ;display:flex;">
+        <div class="image-box" style="flex:50%; background-color:gray;margin:50px; background-image: url('https://assets.entrepreneur.com/content/3x2/2000/20190409175112-GettyImages-954610134.jpeg?format=pjeg&auto=webp&cr'); background-size: cover; background-position: center;">
         </div>
-        <div class="text-box" style="flex:50%;margin-top:50px;float:left;">
+        <div class="text-box" style="flex:50%; margin-top:50px; float:left;">
             <a style="font-size:50px;color: #a70000">Create And Manage</a><br>
-            <a style="font-size:25px;">From creating conference to <br> publishing papers , we have <br>got all that a conference needs</a> 
-        </div>    
-    </div>
-    <div class="aboutus" id="about-2" style="width:auto;margin: auto; height:400px;display:flex;background-color: rgba(231,232,233,0.9);">
-        <div class="text-box-2 " style="flex:50%;text-align:center;margin-left:10px;">
-            <a style="font-size:50px;color: #a70000">Explore Conference Papers</a><br>
-            <a style="font-size:25px;text-align:center;">Join conference from <br> any corner of world,<br> access papers and explore<br> emerging technologies</a> 
-        </div>  
-    
-        <div class="image-box" style="flex:50%; background-color:gray;margin:50px ;">
-          
+            <a style="font-size:25px;">From creating conference to publishing papers,<br> we have got all that a conference needs.</a>
         </div>
     </div>
+
+    <div class="aboutus" id="about-2" style="width:auto; margin: auto; height:400px; display:flex; background-color: rgba(231,232,233,0.9);">
+        <div class="text-box-2 " style="flex:50%; text-align:right; margin-left:10px; margin-top:50px">
+            <a style="font-size:50px; color: #a70000">Explore Conference Papers</a><br>
+            <a style="font-size:25px; text-align:right;">Join conference from any corner of world,<br> access papers and explore emerging technologies.</a>
+        </div>
+        <div class="image-box" style="flex:50%; background-color:gray;margin:50px; background-image: url('https://wallpapercave.com/wp/wp2015494.jpg'); background-size: cover; background-position: center;">
+        </div>
+    </div>
+
     <div class="aboutus" id="about-3" style="width:auto;margin: auto; height:400px;display:flex;">
-        <div class="image-box" style="flex:50%; background-color:gray;margin:50px;">
-          
+        <div class="image-box" style="flex:50%; background-color:gray;margin:50px; background-image: url('https://www.enago.com/academy/wp-content/uploads/2019/08/action-adult-analog-1043512-1.jpg'); background-size: cover; background-position: center;">
         </div>
-        <div class="text-box" style="flex:50%;margin-top:50px ;float:left;">
+        <div class="text-box" style="flex:50%; margin-top:50px ; float:left;">
             <a style="font-size:50px;color: #a70000">Authors And Reviewers</a><br>
-            <a style="font-size:25px;">Authors can easily submit <br>papers ,Reviewers can easily <br>review papers. </a> 
+            <a style="font-size:25px;">Authors can easily submit papers,<br>Reviewers can easily review papers. </a>
         </div>
-    </div>    
+    </div>
+
     {% endblock %}
 
 {% block additional-script %}
@@ -309,7 +313,7 @@ input.onkeyup = (e)=>{
     if(userData){
         emptyArray = suggestions.filter((data)=>{
             //filtering array value and user characters to lowercase and return only those words which are start with user enetered chars
-            return data.toLocaleLowerCase().startsWith(userData.toLocaleLowerCase()); 
+            return data.toLocaleLowerCase().startsWith(userData.toLocaleLowerCase());
         });
         emptyArray = emptyArray.map((data)=>{
             // passing return data inside li tag
@@ -340,4 +344,4 @@ function showSuggestions(list){
 
 
 </script>
-    {% endblock %} 
+    {% endblock %}
